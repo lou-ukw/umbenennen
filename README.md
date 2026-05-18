@@ -1,4 +1,4 @@
-# Rename the Street — umbenennen?! Mitte 2026
+# umbenennen?!
 
 Interaktive Ausstellungs-App für die Ausstellung *umbenennen?!* im Mitte Museum, Berlin.
 
