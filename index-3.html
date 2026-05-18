@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rename the Street — umbenennen?! Mitte 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="typography.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: #1D9E75; --teal-light: #E1F5EE; --teal-mid: #5DCAA5; --teal-dark: #0F6E56;
+    --sign-blue: #1A5DA6; --bg: #FAFAF8; --bg-card: #FFFFFF;
+    --text: #1C1C1A; --text-muted: #5C5C58; --text-light: #8C8C88;
+    --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.18);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', Helvetica Neue, Arial, sans-serif;
+    --radius: 4px; --radius-lg: 8px;
+  }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  #app { min-height: 100vh; display: flex; flex-direction: column; }
+  .top-bar { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: var(--serif); font-size: 15px; color: var(--teal); font-weight: 400; cursor: default; user-select: none; }
+  .logo span { color: var(--text-light); }
+  .top-right { display: flex; align-items: center; gap: 1rem; }
+  .nav-link { font-size: 13px; color: var(--text-muted); cursor: pointer; background: none; border: none; font-family: var(--sans); padding: 4px 0; border-bottom: 1px solid transparent; transition: color 0.15s, border-color 0.15s; }
+  .nav-link:hover { color: var(--teal); border-bottom-color: var(--teal); }
+  .step-label { font-size: 11px; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; }
+  .reset-btn { font-size: 11px; color: var(--text-light); background: none; border: 1px solid var(--border); padding: 4px 10px; border-radius: 2px; cursor: pointer; font-family: var(--sans); letter-spacing: 0.04em; transition: color 0.15s, border-color 0.15s; }
+  .reset-btn:hover { color: var(--teal); border-color: var(--teal-mid); }
+  .progress-bar { height: 2px; background: var(--border); flex-shrink: 0; }
+  .progress-fill { height: 100%; background: var(--teal); transition: width 0.5s ease; }
+  .main { flex: 1; }
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .inner { max-width: 620px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+  .tag { display: inline-block; background: var(--teal-light); color: var(--teal-dark); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 2px; margin-bottom: 1rem; font-family: var(--sans); font-weight: 500; }
+  h1 { font-family: var(--serif); font-size: 28px; font-weight: 400; line-height: 1.25; margin-bottom: 0.5rem; }
+  h2 { font-family: var(--serif); font-size: 22px; font-weight: 400; line-height: 1.3; margin-bottom: 0.75rem; }
+  h3 { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; }
+  p { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 0.75rem; }
+  p strong { color: var(--text); font-weight: 500; }
+  .info-box { background: var(--bg); border-left: 3px solid var(--teal); padding: 0.9rem 1.1rem; margin: 1.25rem 0; border-radius: 0 var(--radius) var(--radius) 0; }
+  .info-box p { margin: 0; font-size: 13.5px; }
+  .err-box { background: #FFF3F3; border-left: 3px solid #E24B4A; padding: 0.85rem 1.1rem; margin: 1rem 0; border-radius: 0 var(--radius) var(--radius) 0; display: none; }
+  .err-box.show { display: block; }
+  .err-box p { margin: 0; font-size: 13.5px; color: #A32D2D; }
+  .btn-primary { background: var(--teal); color: white; border: none; padding: 12px 28px; font-size: 14px; font-family: var(--sans); font-weight: 500; letter-spacing: 0.03em; cursor: pointer; border-radius: var(--radius); transition: background 0.15s; width: 100%; }
+  .btn-primary:hover { background: var(--teal-dark); }
+  .btn-primary:disabled { background: var(--border); color: var(--text-light); cursor: not-allowed; }
+  .btn-secondary { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-strong); padding: 10px 20px; font-size: 14px; font-family: var(--sans); cursor: pointer; border-radius: var(--radius); transition: border-color 0.15s, color 0.15s; }
+  .btn-secondary:hover { border-color: var(--teal-mid); color: var(--teal-dark); }
+  .nav-row { display: flex; gap: 10px; margin-top: 2.5rem; }
+  .nav-row .btn-primary { flex: 2; }
+  .nav-row .btn-secondary { flex: 1; }
+
+  /* ── CHOICE BUTTONS — alle gleich, kein visueller Bias ── */
+  .choice-list { display: flex; flex-direction: column; gap: 8px; margin: 1.25rem 0; }
+  .choice-btn {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+    text-align: left; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: var(--sans);
+  }
+  .choice-btn:hover { border-color: var(--teal-mid); background: var(--teal-light); }
+  .choice-btn.sel { border-color: var(--teal); background: var(--teal-light); }
+  .choice-btn.warned { border-color: var(--border-strong); background: var(--bg); }
+  .choice-btn .c-label { font-size: 15px; color: var(--text); font-weight: 500; display: block; margin-bottom: 2px; }
+  .choice-btn .c-desc { font-size: 13px; color: var(--text-muted); display: block; line-height: 1.5; }
+  /* Kein .invalid-Styling mehr — alle Optionen sehen gleich aus */
+
+  .part-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 1rem 0; }
+  .part-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 0.75rem 1rem; cursor: pointer; transition: all 0.15s; position: relative; font-family: var(--sans); }
+  .part-card.required { border-color: var(--teal-mid); background: var(--teal-light); }
+  .part-card.selected { border-color: var(--teal); background: var(--teal-light); }
+  .part-card .p-name { font-size: 14px; font-weight: 500; color: var(--text); display: block; margin-bottom: 2px; }
+  .part-card .p-role { font-size: 12px; color: var(--text-light); line-height: 1.4; }
+  .req-badge, .sel-badge { position: absolute; top: 6px; right: 8px; font-size: 10px; color: var(--teal-dark); background: white; padding: 2px 6px; border-radius: 2px; font-weight: 500; }
+  .sel-badge { display: none; }
+  .part-card.selected .sel-badge { display: block; }
+
+  /* ── NAME OPTIONS — alle gleich ── */
+  .name-list { display: flex; flex-direction: column; gap: 8px; margin: 1rem 0; }
+  .name-opt {
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 0.9rem 1.25rem; cursor: pointer;
+    transition: all 0.15s; font-family: var(--sans);
+  }
+  .name-opt:hover { border-color: var(--teal-mid); background: var(--teal-light); }
+  .name-opt.sel { border-color: var(--teal); background: var(--teal-light); }
+  .name-opt.warned { border-color: var(--border-strong); background: var(--bg); }
+  .n-name { font-size: 16px; color: var(--text); font-weight: 500; display: block; }
+  .n-years { font-size: 12px; color: var(--text-light); display: block; margin: 2px 0; }
+  .n-desc { font-size: 13px; color: var(--text-muted); display: block; line-height: 1.5; }
+
+  .voices-box { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin: 1rem 0; }
+  .voices-header { background: var(--bg); padding: 0.7rem 1rem; font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; font-family: var(--sans); }
+  .voice { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+  .voice:last-child { border-bottom: none; }
+  .voice-who { font-size: 11px; color: var(--teal-dark); font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; font-family: var(--sans); }
+  .voice-text { font-size: 14px; color: var(--text); line-height: 1.6; font-style: italic; font-family: var(--serif); }
+
+  .decision-list { display: flex; flex-direction: column; gap: 10px; margin: 1.25rem 0; }
+  .dec-btn { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.5rem; cursor: pointer; text-align: left; transition: all 0.15s; font-family: var(--sans); background: var(--bg-card); }
+  .dec-btn:hover { border-color: var(--teal-mid); background: var(--teal-light); }
+  .dec-btn.sel { border-color: var(--teal); background: var(--teal-light); border-width: 2px; }
+  .d-label { font-size: 16px; font-weight: 500; color: var(--text); display: block; }
+  .d-detail { font-size: 13px; color: var(--text-muted); margin-top: 3px; display: block; line-height: 1.5; }
+
+  .timeline { padding-left: 22px; margin: 1rem 0; position: relative; }
+  .timeline::before { content:''; position:absolute; left:7px; top:8px; bottom:8px; width:1px; background: var(--teal-mid); }
+  .tl-item { position: relative; margin-bottom: 1rem; font-family: var(--sans); }
+  .tl-dot { position:absolute; left:-17px; top:4px; width:9px; height:9px; border-radius:50%; background:var(--teal); }
+  .tl-label { font-size: 13px; font-weight: 500; color: var(--text); }
+  .tl-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.5; }
+
+  .result-card { background: var(--teal-light); border: 1px solid var(--teal-mid); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin: 1rem 0 1.5rem; }
+  .r-label { font-size: 11px; color: var(--teal-dark); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 4px; font-family: var(--sans); }
+  .r-value { font-size: 17px; font-weight: 500; color: var(--text); line-height: 1.4; font-family: var(--sans); }
+  .r-note { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; font-style: italic; font-family: var(--sans); }
+
+  .reflection-box { border-left: 3px solid var(--border-strong); padding: 1rem 1.25rem; margin: 1.25rem 0; border-radius: 0 var(--radius) var(--radius) 0; }
+  .reflection-label { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 6px; font-family: var(--sans); }
+  .reflection-text { font-family: var(--serif); font-size: 15px; font-style: italic; color: var(--text-muted); line-height: 1.7; }
+  .source-note { font-size: 11px; color: var(--text-light); border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 1.5rem; font-style: italic; font-family: var(--sans); }
+
+  /* ── STRAΒENSCHILD ── */
+  .sign-wrap { margin: 1.5rem auto; text-align: center; }
+  .sign-preview { display: inline-block; background: var(--sign-blue); border-radius: 3px; border: 2.5px solid white; outline: 1.5px solid var(--sign-blue); min-width: 240px; max-width: 340px; }
+  .sign-body { padding: 14px 20px 18px; }
+  .sign-street { font-family: Arial, sans-serif; font-size: 20px; font-weight: 700; color: white; line-height: 1.2; word-break: break-word; }
+  .sign-sub { font-family: Arial, sans-serif; font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 5px; line-height: 1.4; }
+  .sign-district { font-family: Arial, sans-serif; font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 7px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── SCHILDGESTALTER ── */
+  .designer-section { margin-bottom: 1.5rem; }
+  .designer-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-bottom: 0.5rem; display: flex; align-items: baseline; gap: 6px; font-family: var(--sans); }
+  .opt-badge { font-size: 11px; color: var(--text-light); font-style: italic; text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .type-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
+  .type-btn { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 4px; text-align: center; cursor: pointer; font-size: 13px; color: var(--text-muted); transition: all 0.15s; font-family: var(--sans); }
+  .type-btn:hover, .type-btn.sel { background: var(--teal-light); border-color: var(--teal); color: var(--teal-dark); font-weight: 500; }
+  .person-list-d { display: flex; flex-direction: column; gap: 6px; max-height: 340px; overflow-y: auto; padding-right: 4px; }
+  .person-list-d::-webkit-scrollbar { width: 4px; }
+  .person-list-d::-webkit-scrollbar-track { background: var(--bg); }
+  .person-list-d::-webkit-scrollbar-thumb { background: var(--teal-mid); border-radius: 2px; }
+  .pb { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 0.7rem 1rem; cursor: pointer; text-align: left; transition: border-color 0.15s, background 0.15s; font-family: var(--sans); width: 100%; }
+  .pb:hover, .pb.sel { border-color: var(--teal); background: var(--teal-light); }
+  .pb-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .pb-years { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+  .pb-short { font-size: 12px; color: var(--text-muted); margin-top: 3px; line-height: 1.4; }
+  .pb.pb-custom { border-style: dashed; }
+  .pb.pb-custom:hover, .pb.pb-custom.sel { border-style: solid; }
+
+  /* Freitext-Eingabe im Schildgestalter */
+  .custom-person-form { background: var(--bg); border: 1px solid var(--teal-mid); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-top: 8px; display: none; }
+  .custom-person-form.show { display: block; }
+  .custom-person-form input { width: 100%; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 0.6rem 0.85rem; font-size: 14px; color: var(--text); background: var(--bg-card); font-family: var(--sans); margin-bottom: 8px; transition: border-color 0.15s; }
+  .custom-person-form input:focus { outline: none; border-color: var(--teal); }
+  .custom-person-form input::placeholder { color: var(--text-light); }
+  .custom-person-form .field-note { font-size: 11px; color: var(--text-light); margin-bottom: 6px; font-family: var(--sans); }
+
+  textarea { width: 100%; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 0.75rem; font-size: 13px; color: var(--text); background: var(--bg-card); resize: vertical; min-height: 70px; font-family: var(--sans); line-height: 1.5; transition: border-color 0.15s; }
+  textarea:focus { outline: none; border-color: var(--teal); }
+  textarea::placeholder { color: var(--text-light); }
+  input[type=text] { width: 100%; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 0.65rem 0.85rem; font-size: 14px; color: var(--text); background: var(--bg-card); font-family: var(--sans); transition: border-color 0.15s; }
+  input[type=text]:focus { outline: none; border-color: var(--teal); }
+  input[type=text]::placeholder { color: var(--text-light); }
+  .char-count { font-size: 11px; color: var(--text-light); text-align: right; margin-top: 3px; font-family: var(--sans); }
+  .sign-preview-row { display: flex; justify-content: center; margin: 1.5rem 0; }
+
+  /* ── GALERIE ── */
+  .gallery-header { padding: 1.5rem 1.5rem 0; max-width: 860px; margin: 0 auto; }
+  .gallery-meta { display: flex; gap: 10px; padding: 0.75rem 0 1rem; flex-wrap: wrap; }
+  .meta-pill { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 12px; color: var(--text-muted); font-family: var(--sans); }
+  .meta-pill strong { color: var(--text); }
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; padding: 0 1.5rem 2rem; max-width: 860px; margin: 0 auto; }
+  .g-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
+  .g-card:hover { border-color: var(--teal-mid); transform: translateY(-1px); }
+  .g-sign-wrap { margin-bottom: 0.75rem; }
+  .g-reason { font-size: 12px; color: var(--text-muted); line-height: 1.5; font-style: italic; border-top: 1px solid var(--border); padding-top: 0.6rem; margin-top: 0.5rem; font-family: var(--serif); }
+  .g-reason-lbl { font-size: 10px; color: var(--teal-dark); font-style: normal; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; display: block; margin-bottom: 2px; font-family: var(--sans); }
+  .gallery-empty { text-align: center; padding: 4rem 1.5rem; color: var(--text-muted); font-size: 14px; }
+  .detail-back { display: flex; align-items: center; gap: 6px; background: none; border: none; font-size: 13px; color: var(--text-muted); cursor: pointer; font-family: var(--sans); padding: 0; margin-bottom: 1.5rem; }
+  .detail-back:hover { color: var(--teal); }
+  .detail-bio { background: var(--bg); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin: 1.25rem 0; }
+  .detail-bio-name { font-size: 15px; font-weight: 500; color: var(--text); font-family: var(--sans); }
+  .detail-bio-years { font-size: 12px; color: var(--text-light); margin: 2px 0 8px; font-family: var(--sans); }
+  .detail-bio-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; font-family: var(--sans); }
+  .detail-reason { border-left: 3px solid var(--teal); padding: 0.75rem 1rem; margin: 1.25rem 0; border-radius: 0 var(--radius) var(--radius) 0; background: var(--teal-light); }
+  .detail-reason-lbl { font-size: 11px; color: var(--teal-dark); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-bottom: 4px; font-family: var(--sans); }
+  .detail-reason-text { font-size: 14px; color: #085041; line-height: 1.65; font-style: italic; font-family: var(--serif); }
+
+  /* ── GALERIE-ABFRAGE ── */
+  .gallery-ask { text-align: center; padding: 2.5rem 1.5rem; max-width: 480px; margin: 0 auto; }
+  .gallery-ask h2 { margin-bottom: 0.5rem; }
+  .gallery-ask p { margin-bottom: 2rem; }
+  .gallery-ask-btns { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ── SUCCESS / ABSCHLUSS ── */
+  .success-wrap { text-align: center; padding: 3rem 1.5rem; max-width: 500px; margin: 0 auto; }
+  .success-icon { font-size: 40px; color: var(--teal); margin-bottom: 1rem; }
+  .success-title { font-family: var(--serif); font-size: 22px; font-weight: 400; margin-bottom: 0.5rem; }
+  .success-sub { font-size: 14px; color: var(--text-muted); line-height: 1.65; max-width: 360px; margin: 0 auto 2rem; font-family: var(--sans); }
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .dsgvo-note { font-size: 11px; color: var(--text-light); font-style: italic; padding: 0.75rem 0; border-top: 1px solid var(--border); margin-top: auto; font-family: var(--sans); }
+
+  /* ── TOAST ── */
+  .toast-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(20,20,18,0.45); display: flex; align-items: center; justify-content: center; z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  .toast-overlay.show { opacity: 1; pointer-events: all; }
+  .toast-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.75rem 2rem; max-width: 440px; width: 90%; border-top: 3px solid var(--text-muted); transform: translateY(8px); transition: transform 0.2s ease; }
+  .toast-overlay.show .toast-card { transform: translateY(0); }
+  .toast-rule { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.6rem; }
+  .toast-title { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--text); margin-bottom: 0.75rem; line-height: 1.3; }
+  .toast-body { font-family: var(--sans); font-size: 14px; font-weight: 300; color: var(--text-muted); line-height: 1.65; margin-bottom: 1.25rem; }
+  .toast-close { background: var(--text); color: white; border: none; padding: 10px 22px; font-size: 13px; font-family: var(--sans); font-weight: 500; border-radius: var(--radius); cursor: pointer; letter-spacing: 0.03em; width: 100%; }
+  .toast-close:hover { background: #000; }
+
+  /* ── ADMIN EXPORT ── */
+  .admin-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 900; display: none; }
+  .admin-overlay.show { display: flex; }
+  .admin-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 2rem; max-width: 360px; width: 90%; }
+  .admin-card h3 { font-size: 14px; color: var(--text); margin-bottom: 1rem; font-family: var(--sans); text-transform: none; letter-spacing: 0; }
+  .admin-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .admin-btns { display: flex; flex-direction: column; gap: 8px; }
+
+  .idle-bar { position: fixed; bottom: 0; left: 0; height: 2px; background: var(--teal-mid); transition: width 1s linear; pointer-events: none; }
+
+  @media (max-width: 600px) {
+    .inner { padding: 1.5rem 1rem; }
+    .part-grid { grid-template-columns: 1fr; }
+    .type-grid { grid-template-columns: repeat(3,1fr); }
+    .top-bar { padding: 0.75rem 1rem; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top-bar">
+    <div class="logo" id="logo-btn">umbenennen<span>?!</span> · Simulator</div>
+    <div class="top-right">
+      <button class="nav-link" id="nav-gallery" onclick="goGallery()" style="display:none">Galerie</button>
+      <span class="step-label" id="step-label"></span>
+      <button class="reset-btn" id="reset-btn" onclick="resetApp()" style="display:none">↺ Neu starten</button>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="main">
+
+    <!-- START -->
+    <div id="s-start" class="screen active">
+      <div class="inner" style="min-height:70vh;display:flex;flex-direction:column;justify-content:center">
+        <div class="logo" style="font-size:13px;margin-bottom:2.5rem;color:var(--teal)">umbenennen?! · Mitte 2026</div>
+        <h1>Rename the Street</h1>
+        <p style="font-size:17px;color:var(--text);margin:0.75rem 0 0.5rem;font-family:var(--serif);line-height:1.6;font-weight:400">Wie entscheidet eine Stadt, welche Namen sie trägt — und welche nicht?</p>
+        <p>Durchlaufen Sie einen Berliner Umbenennungsprozess: Antrag, Gutachten, Beteiligte, Namensauswahl, Debatte, Abstimmung. Alle Schritte sind real — die Entscheidung liegt bei Ihnen.</p>
+        <div class="info-box"><p>Die Szenarien basieren auf dokumentierten Verfahren des Bezirksamts Mitte. Diese Anwendung speichert keine personenbezogenen Daten.</p></div>
+        <button class="btn-primary" onclick="startApp()" style="max-width:220px;margin-top:0.5rem">Verfahren beginnen →</button>
+        <div style="margin-top:1rem">
+          <button class="btn-secondary" onclick="goGallery()" style="width:auto">Galerie entdecken</button>
+        </div>
+        <div class="dsgvo-note" style="margin-top:2rem">Gemäß den Ausführungsvorschriften zur Benennung von Straßen und Plätzen, Berlin.</div>
+      </div>
+    </div>
+
+    <!-- SCENARIO -->
+    <div id="s-scenario" class="screen">
+      <div class="inner">
+        <div class="tag" id="sc-tag"></div>
+        <h2 id="sc-title"></h2>
+        <p id="sc-intro"></p>
+        <div class="info-box" id="sc-context"></div>
+        <div class="timeline" id="sc-timeline"></div>
+        <div class="nav-row" style="margin-top:2rem">
+          <button class="btn-primary" onclick="go('s-reason')">Weiter: Antrag stellen →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REASON -->
+    <div id="s-reason" class="screen">
+      <div class="inner">
+        <h3>Schritt 1 — Antragsbegründung</h3>
+        <h2>Auf welcher Grundlage wird der Antrag gestellt?</h2>
+        <p>Berliner Richtlinien definieren, welche Gründe eine Umbenennung rechtlich ermöglichen. Wählen Sie die Begründung, die Sie für zutreffend halten.</p>
+        <div class="choice-list" id="reason-list"></div>
+        <div class="nav-row">
+          <button class="btn-secondary" onclick="go('s-scenario')">← Zurück</button>
+          <button class="btn-primary" id="btn-reason" onclick="go('s-history')" disabled>Weiter →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="s-history" class="screen">
+      <div class="inner">
+        <h3>Schritt 2 — Historische Prüfung</h3>
+        <h2 id="hist-title"></h2>
+        <p id="hist-intro"></p>
+        <div class="voices-box" id="hist-findings"></div>
+        <p id="hist-conclusion" style="margin-top:1rem"></p>
+        <div class="info-box" id="hist-rule"></div>
+        <div class="nav-row">
+          <button class="btn-secondary" onclick="go('s-reason')">← Zurück</button>
+          <button class="btn-primary" onclick="go('s-participants')">Weiter: Beteiligte →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTICIPANTS -->
+    <div id="s-participants" class="screen">
+      <div class="inner">
+        <h3>Schritt 3 — Beteiligungsverfahren</h3>
+        <h2>Wen beziehen Sie in das Verfahren ein?</h2>
+        <p id="part-intro"></p>
+        <div class="part-grid" id="part-grid"></div>
+        <div class="err-box" id="err-part"><p>Bitte schließen Sie alle formell vorgeschriebenen Beteiligten ein.</p></div>
+        <div class="nav-row">
+          <button class="btn-secondary" onclick="go('s-history')">← Zurück</button>
+          <button class="btn-primary" onclick="submitPart()">Weiter: Namensvorschläge →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAMES -->
+    <div id="s-names" class="screen">
+      <div class="inner">
+        <h3>Schritt 4 — Namensvorschläge</h3>
+        <h2>Welcher Name soll vorgeschlagen werden?</h2>
+        <p id="names-intro"></p>
+        <div class="name-list" id="name-list"></div>
+        <div class="nav-row">
+          <button class="btn-secondary" onclick="go('s-participants')">← Zurück</button>
+          <button class="btn-primary" id="btn-name" onclick="go('s-conflict')" disabled>Weiter: Debatte →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFLICT -->
+    <div id="s-conflict" class="screen">
+      <div class="inner">
+        <h3>Schritt 5 — Öffentliche Debatte</h3>
+        <h2 id="conf-title"></h2>
+        <p id="conf-intro"></p>
+        <div class="voices-box" id="conf-voices"></div>
+        <p id="conf-note" style="font-size:14px;color:var(--text-muted);margin-top:1rem;font-family:var(--serif);font-style:italic"></p>
+        <div class="nav-row">
+          <button class="btn-secondary" onclick="go('s-names')">← Zurück</button>
+          <button class="btn-primary" onclick="go('s-decision')">Weiter: Abstimmung →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECISION -->
+    <div id="s-decision" class="screen">
+      <div class="inner">
+        <h3>Schritt 6 — BVV-Entscheidung</h3>
+        <h2>Die Bezirksverordnetenversammlung stimmt ab</h2>
+        <p id="dec-intro"></p>
+        <div class="decision-list" id="dec-list"></div>
+        <div class="err-box" id="err-dec"><p>Bitte wählen Sie eine Option.</p></div>
+        <div class="nav-row">
+          <button class="btn-secondary" onclick="go('s-conflict')">← Zurück</button>
+          <button class="btn-primary" id="btn-dec" onclick="submitDecision()" disabled>Entscheidung bestätigen →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="s-result" class="screen">
+      <div class="inner">
+        <h3>Verfahren abgeschlossen</h3>
+        <h2 id="res-title"></h2>
+        <div class="result-card" id="res-card"></div>
+        <div class="reflection-box">
+          <div class="reflection-label">Zum Weiterdenken</div>
+          <div class="reflection-text" id="res-reflection"></div>
+        </div>
+        <div class="source-note" id="res-source"></div>
+        <div class="nav-row" style="flex-wrap:wrap">
+          <button class="btn-primary" onclick="go('s-designer')">Jetzt Schild gestalten →</button>
+          <button class="btn-secondary" onclick="resetApp()">Neues Szenario ↺</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHILDGESTALTER -->
+    <div id="s-designer" class="screen">
+      <div class="inner">
+        <h3>Ihr Straßenschild</h3>
+        <h2>Gestalten Sie ein eigenes Schild</h2>
+        <p>Wählen Sie einen Namen — oder tragen Sie eine Person ein, die Sie vermissen.</p>
+
+        <div class="sign-preview-row">
+          <div class="sign-preview"><div class="sign-body">
+            <div class="sign-street" id="d-sign-name">Name-…</div>
+            <div class="sign-sub" id="d-sign-sub" style="display:none"></div>
+            <div class="sign-district">Berlin-Mitte</div>
+          </div></div>
+        </div>
+
+        <div class="designer-section">
+          <div class="designer-label">Straßentyp</div>
+          <div class="type-grid">
+            <div class="type-btn" onclick="dSelectType('-Straße',this)">-Straße</div>
+            <div class="type-btn" onclick="dSelectType('-Allee',this)">-Allee</div>
+            <div class="type-btn" onclick="dSelectType('-Platz',this)">-Platz</div>
+            <div class="type-btn" onclick="dSelectType('-Ufer',this)">-Ufer</div>
+            <div class="type-btn" onclick="dSelectType('-Weg',this)">-Weg</div>
+          </div>
+        </div>
+
+        <div class="designer-section">
+          <div class="designer-label">Person wählen</div>
+          <div class="person-list-d" id="d-person-list"></div>
+          <!-- Freitext-Option -->
+          <div class="custom-person-form" id="custom-form">
+            <div class="field-note">Tragen Sie eine Person ein, die Sie im Berliner Straßenbild vermissen. Sie wird für alle zukünftigen Besuchenden in die Liste aufgenommen.</div>
+            <input type="text" id="cp-name" maxlength="60" placeholder="Name der Person">
+            <input type="text" id="cp-years" maxlength="20" placeholder="Lebensdaten, z.B. 1901–1984">
+            <input type="text" id="cp-short" maxlength="80" placeholder="Kurzbeschreibung, z.B. Berliner Widerstandskämpferin">
+            <button class="btn-primary" onclick="addCustomPerson()" style="margin-top:4px">Person hinzufügen</button>
+          </div>
+        </div>
+
+        <div class="designer-section">
+          <div class="designer-label">Unterzeile <span class="opt-badge">— selbst formulieren</span></div>
+          <input type="text" id="d-subline" maxlength="60" placeholder="z.B. Widerstandskämpferin, 1902–1945" oninput="dUpdateSubline(this)">
+          <div class="char-count"><span id="d-sub-left">60</span> Zeichen übrig</div>
+        </div>
+
+        <div class="designer-section">
+          <div class="designer-label">Warum dieser Name? <span class="opt-badge">— freiwillig</span></div>
+          <textarea id="d-reason" maxlength="200" placeholder="Was hat Sie bewogen, diesen Namen zu wählen? (optional, max. 200 Zeichen)" oninput="dUpdateReason(this)"></textarea>
+          <div class="char-count"><span id="d-reason-left">200</span> Zeichen übrig</div>
+        </div>
+
+        <button class="btn-primary" id="d-btn-add" onclick="goToGalleryAsk()" disabled>Schild fertigstellen →</button>
+        <div style="text-align:center;margin-top:0.75rem">
+          <button class="btn-secondary" onclick="resetApp()">Neues Szenario beginnen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALERIE-ABFRAGE -->
+    <div id="s-gallery-ask" class="screen">
+      <div class="gallery-ask">
+        <div class="sign-preview-row" id="ask-sign-preview"></div>
+        <h2>Möchten Sie Ihr Schild zur Galerie hinzufügen?</h2>
+        <p>Das Schild wird anonym gespeichert — kein Name, kein Zeitstempel, keine persönlichen Daten.</p>
+        <div class="gallery-ask-btns">
+          <button class="btn-primary" onclick="confirmAddToGallery()">Ja, zur Galerie hinzufügen</button>
+          <button class="btn-secondary" onclick="go('s-gallery-no')">Nein, danke</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEIN-SCREEN -->
+    <div id="s-gallery-no" class="screen">
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Ihr Schild ist fertig</div>
+        <div class="success-sub">Es wurde nicht zur Galerie hinzugefügt. Wenn Sie möchten, können Sie schauen, was andere gestaltet haben.</div>
+        <div class="btn-row">
+          <button class="btn-primary" style="width:auto;padding:10px 24px" onclick="goGallery()">Galerie entdecken →</button>
+          <button class="btn-secondary" onclick="resetApp()">Neues Szenario</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALERIE HINZUGEFÜGT -->
+    <div id="s-dsuccess" class="screen">
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Schild hinzugefügt</div>
+        <div class="success-sub">Ihr Schild ist anonym in der Galerie sichtbar und bleibt für die Dauer der Ausstellung erhalten.</div>
+        <div style="display:flex;justify-content:center;margin-bottom:2rem">
+          <div class="sign-preview"><div class="sign-body">
+            <div class="sign-street" id="suc-name"></div>
+            <div class="sign-sub" id="suc-sub" style="display:none"></div>
+            <div class="sign-district">Berlin-Mitte</div>
+          </div></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" style="width:auto;padding:10px 24px" onclick="goGallery()">Alle Schilder ansehen →</button>
+          <button class="btn-secondary" onclick="resetApp()">Neues Szenario</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALERIE -->
+    <div id="s-gallery" class="screen">
+      <div class="gallery-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div>
+            <h2 style="margin:0">Galerie der Schilder</h2>
+            <p style="margin:4px 0 0;font-size:13px">Alle Schilder entstanden während der Ausstellung — anonym und freiwillig.</p>
+          </div>
+          <button class="btn-primary" style="width:auto;padding:10px 20px" onclick="go('s-designer')">+ Eigenes Schild gestalten</button>
+        </div>
+        <div class="gallery-meta">
+          <div class="meta-pill">Schilder: <strong id="g-count">0</strong></div>
+          <div class="meta-pill">Personen im Pool: <strong id="g-pool-count">0</strong></div>
+        </div>
+      </div>
+      <div class="gallery-grid" id="gallery-grid"></div>
+      <div class="gallery-empty" id="gallery-empty" style="display:none">Noch keine Schilder — gestalte das erste.</div>
+      <div style="padding:1rem 1.5rem;text-align:center">
+        <button class="btn-secondary" onclick="resetApp()">← Zurück zum Simulator</button>
+      </div>
+    </div>
+
+    <!-- GALERIE DETAIL -->
+    <div id="s-detail" class="screen">
+      <div class="inner">
+        <button class="detail-back" onclick="go('s-gallery')">← Galerie</button>
+        <div id="detail-content"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-overlay" id="toast-overlay" onclick="closeToast()">
+  <div class="toast-card" onclick="event.stopPropagation()">
+    <div class="toast-rule" id="toast-rule">Hinweis</div>
+    <div class="toast-title" id="toast-title"></div>
+    <div class="toast-body" id="toast-body"></div>
+    <button class="toast-close" onclick="closeToast()">Zurück zur Auswahl</button>
+  </div>
+</div>
+
+<!-- ADMIN (langes Drücken auf Logo) -->
+<div class="admin-overlay" id="admin-overlay">
+  <div class="admin-card">
+    <h3>Verwaltung — Galerie</h3>
+    <p>Exportieren Sie die Galerie als JSON-Datei zur Sicherung. Oder setzen Sie die Galerie zurück.</p>
+    <div class="admin-btns">
+      <button class="btn-primary" onclick="exportGallery()">Galerie exportieren (JSON)</button>
+      <button class="btn-secondary" onclick="exportPersonPool()">Personenpool exportieren</button>
+      <button class="btn-secondary" style="color:#A32D2D;border-color:#E24B4A" onclick="confirmClearGallery()">Galerie leeren</button>
+      <button class="btn-secondary" onclick="closeAdmin()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<div class="idle-bar" id="idle-bar" style="width:100%"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// SZENARIEN
+// ─────────────────────────────────────────────────────────────────────────────
+const SCENARIOS = [
+  {
+    id:'nettelbeck',
+    tag:'Szenario 1 — Kolonialgeschichte',
+    title:'Nettelbeckplatz, Berlin-Wedding',
+    intro:'Der Nettelbeckplatz in Wedding trägt seit 1884 den Namen eines Seefahrers, der als preußischer „Volksheld" bekannt wurde. Forschungen der Universität Erfurt ergaben, dass Joachim Nettelbeck (1728–1824) mehrfach am transatlantischen Versklavungshandel beteiligt war.',
+    context:'<p>Nettelbeck reiste auf Versklavungsschiffen in die Karibik, diente als Dolmetscher beim Kauf und Transport von Menschen, und setzte sich dreimal für den Erwerb preußischer Kolonien ein. Er hat keinerlei dokumentierten Bezug zu Berlin oder Wedding. Zugleich gilt er als Held der Kolberger Verteidigung 1807 — eine Zuschreibung, die die Nationalsozialisten für Propagandazwecke nutzten.</p>',
+    timeline:[
+      {label:'2020',desc:'Die AV Berliner Straßengesetz wird erweitert: Kolonialhistorische Belastung wird als Umbenennungsgrund anerkannt.'},
+      {label:'August 2021',desc:'BVV-Ersuchen zur Prüfung einer Umbenennung des Nettelbeckplatzes.'},
+      {label:'Frühjahr 2023',desc:'530 Namensvorschläge über meinberlin.de, E-Mail und Post.'},
+      {label:'2023–2024',desc:'Beratungsgremium aus 14 Organisationen (Africa-Rat, EOTO, ISD u.a.) erarbeitet drei Finalvorschläge.'},
+      {label:'Juli 2025',desc:'Bezirksamt Mitte beschließt die Umbenennung. Wirksam ab Oktober 2025.'},
+    ],
+    reasons:[
+      {id:'colonial',label:'Kolonialbezug nach AV §5 (2020)',desc:'Die Straße ist nach einer Person benannt, die nachweislich am Versklavungshandel beteiligt war und für den Erwerb von Kolonien lobbyierte.',valid:true},
+      {id:'hero',label:'Historisches Heldenbild gilt heute als überholt',desc:'Das Volksheld-Narrativ um Nettelbeck entspricht nicht mehr dem heutigen Geschichtsbild.',valid:false,context:'Ein verändertes Geschichtsbild allein begründet rechtlich keine Umbenennung. Die Berliner Richtlinien verlangen einen konkreten Bezug zu Kolonialismus, NS oder Antidemokratismus — nicht ein Urteil über Ruf oder Deutung.'},
+      {id:'ns',label:'NS-Propagandafigur (Film „Kolberg", 1945)',desc:'Nettelbeck wurde im NS-Propagandafilm als Heldengestalt eingesetzt.',valid:false,context:'Eine mittelbare NS-Instrumentalisierung reicht nach geltendem Recht nicht aus. Die Richtlinie verlangt, dass die Benennung selbst aus der NS-Zeit stammt oder die Person aktiv für NS-Ideologie stand.'},
+    ],
+    histTitle:'Gutachten: Joachim Nettelbeck',
+    histIntro:'Das Forschungsteam der Universität Erfurt untersuchte Nettelbecks Tätigkeiten als Seefahrer und Lobbyist.',
+    histFindings:[
+      {who:'Beteiligung am Versklavungshandel',text:'"Nettelbeck reiste auf niederländischen Versklavungsschiffen, setzte Sprachkenntnisse als Dolmetscher beim Kauf von Menschen ein und war am Transport über die Mittelpassage beteiligt."'},
+      {who:'Koloniallobbyismus',text:'"Dreifach versuchte Nettelbeck, preußische Könige zum Erwerb karibischer Kolonien zu bewegen. In seiner Autobiografie schrieb er, er wolle Preußen ›auch jenseits der Weltmeere groß sehen‹."'},
+      {who:'Einordnung',text:'"Die Frage ist nicht allein, was Nettelbeck getan hat — sondern was es bedeutet, wen eine Stadt im Straßenbild ehrt."'},
+    ],
+    histConclusion:'Das Gutachten hält den Kolonialbezug für hinreichend belegt. Ob das zur Umbenennung führen soll, ist eine politische Entscheidung — nicht nur eine historische.',
+    histRule:'<p><strong>AV Berliner Straßengesetz §5, erweitert 2020:</strong> Umbenennung möglich bei „Bezug auf Kolonialismus, sofern Straßen nach Wegbereitern und Verfechtern von Kolonialismus, Sklaverei und rassistisch-imperialistischen Ideologien benannt wurden."</p>',
+    partIntro:'Berliner Richtlinien schreiben vor, wer am Verfahren beteiligt sein muss. Darüber hinaus kann das Bezirksamt weitere Akteur*innen einladen.',
+    participants:[
+      {id:'bvv',name:'Bezirksverordnetenversammlung',role:'Pflichtbeteiligt — trifft Endentscheidung',required:true},
+      {id:'ba',name:'Bezirksamt Mitte',role:'Pflichtbeteiligt — koordiniert Verfahren',required:true},
+      {id:'gremium',name:'Beratungsgremium (14 Organisationen)',role:'Pflichtbeteiligt — Africa-Rat, EOTO, ISD u.a.',required:true},
+      {id:'anw',name:'Anwohner*innen',role:'Optional — Beteiligung über meinberlin.de',required:false},
+      {id:'hist',name:'Universität Erfurt, Forschungsteam',role:'Optional — historisches Fachgutachten',required:false},
+    ],
+    namesIntro:'Aus 530 Einreichungen erarbeitete das Beratungsgremium drei Finalvorschläge. Die Berliner Gleichstellungsrichtlinie empfiehlt, Frauen bevorzugt zu benennen. Nicht alle der folgenden Optionen erfüllen die formalen Voraussetzungen.',
+    names:[
+      {id:'ndumbe',name:'Martha-Ndumbe-Platz',years:'Martha Ndumbe, 1902–1945',desc:'In Berlin geboren, Tochter eines kamerunischen Kolonialmigrant*innen. 1944 nach Ravensbrück deportiert, dort gestorben. Berlins erster Stolperstein für eine Schwarze Frau (2021).',valid:true},
+      {id:'jansen',name:'Fasia-Jansen-Platz',years:'Fasia Jansen, 1929–1997',desc:'Schwarze deutsch-liberianische Sängerin und Friedensaktivistin. Wichtige Figur der afrodeutschen Geschichte. Kein direkter Wedding-Bezug.',valid:true},
+      {id:'vera',name:'Vera-Heyer-Platz',years:'Vera Heyer, 1946–1995',desc:'Schwarze deutsche Bürgerrechtlerin. Weniger dokumentiert als die anderen Finalvorschläge.',valid:true},
+      {id:'keep',name:'Nettelbeckplatz (beibehalten)',years:'—',desc:'Der Name bleibt. Ein erklärendes Zusatzschild macht den historischen Kontext sichtbar.',valid:true},
+      {id:'alive',name:'Aminata-Touré-Platz',years:'*1992',desc:'Politikerin und Aktivistin. Lebt noch.',valid:false,context:'Berliner Benennungsrichtlinie: Straßen dürfen nur nach verstorbenen Personen benannt werden — Wartefrist mindestens fünf Jahre nach dem Tod.'},
+    ],
+    conflictTitle:'Stimmen aus dem Beteiligungsverfahren',
+    conflictIntro:'530 Einreichungen, 14 Organisationen, mehrere öffentliche Veranstaltungen — das Verfahren hat Stimmen hervorgebracht, die sich nicht einfach auflösen lassen.',
+    voices:[
+      {who:'Anwohnerin, seit 35 Jahren im Kiez',text:'"Ich wusste nicht, was Nettelbeck wirklich gemacht hat. Aber ich frage mich: Wer entscheidet das jetzt?"'},
+      {who:'Africa-Rat Berlin-Brandenburg',text:'"Es geht nicht darum, Geschichte zu tilgen. Es geht darum zu entscheiden, wen wir ehren — und das ist eine politische Frage."'},
+      {who:'Gewerbetreibender',text:'"Ich hab Verständnis für die Umbenennung. Aber eine Übergangsfrist wäre gut gewesen."'},
+      {who:'Historikerin',text:'"Nettelbeck ist kein Einzelfall. Berlin hat hunderte Straßen, deren Namensgeber nie systematisch untersucht wurden."'},
+    ],
+    conflictNote:'Alle vier Stimmen kamen aus dem realen Beteiligungsverfahren. Keine von ihnen ist falsch.',
+    decisions:[
+      {id:'ndumbe',label:'Martha-Ndumbe-Platz',detail:'Berliner Bezug, KZ-Opfer, erste Stolperstein-Ehrung für eine Schwarze Frau in Deutschland.'},
+      {id:'jansen',label:'Fasia-Jansen-Platz',detail:'Afrodeutsche Aktivistin mit bundesweiter Wirkung. Kein direkter Wedding-Bezug.'},
+      {id:'keep',label:'Nettelbeckplatz mit Zusatzschild',detail:'Der Name bleibt — erklärendes Schild wird hinzugefügt.'},
+      {id:'defer',label:'Vertagung auf die nächste Legislatur',detail:'Die BVV verschiebt die Entscheidung.'},
+    ],
+    results:{
+      ndumbe:{title:'Martha-Ndumbe-Platz',summary:'Die BVV Mitte beschließt die Umbenennung. Wirksam Oktober 2025.',signStreet:'Martha-Ndumbe-Platz',signSub:'Martha Ndumbe, 1902–1945',reflection:'So hat die BVV Mitte im Juli 2025 tatsächlich entschieden. Was bleibt: die Frage, welche der 530 anderen eingereichten Namen nie diskutiert wurden — und warum.',source:'Quellen: Bezirksamt Mitte, 2025. Universität Erfurt, Stellungnahme 2020.'},
+      jansen:{title:'Fasia-Jansen-Platz',summary:'Die BVV Mitte beschließt die Umbenennung nach Fasia Jansen.',signStreet:'Fasia-Jansen-Platz',signSub:'Fasia Jansen, 1929–1997',reflection:'Diese Entscheidung hätte das Gremium ebenfalls treffen können. Im realen Verfahren entschied man sich für Martha Ndumbe, u.a. wegen des stärkeren Berliner Bezugs.',source:'Quellen: Bezirksamt Mitte, 2025.'},
+      keep:{title:'Nettelbeckplatz mit Zusatzschild',summary:'Der Name bleibt. Ein erklärendes Schild wird hinzugefügt.',signStreet:null,reflection:'Diese Option wurde im Verfahren diskutiert. Die Frage, ob ein Schild die Ehrungswirkung eines Namens aufhebt oder nur kontextualisiert, ist nicht abgeschlossen.',source:'Quellen: Bezirksamt Mitte, 2021–2025.'},
+      defer:{title:'Verfahren vertagt',summary:'Die BVV verschiebt die Entscheidung.',signStreet:null,reflection:'Vertagungen gehören zur Berliner Umbenennungsgeschichte. Manche Verfahren dauern Jahrzehnte.',source:'Quellen: Bezirksamt Mitte, 2021–2025.'},
+    }
+  },
+  {
+    id:'petersallee',
+    tag:'Szenario 2 — Partizipation und Kolonialerbe',
+    title:'Petersallee, Berlin-Wedding',
+    intro:'Die Petersallee in Wedding ist eine der am längsten diskutierten Umbenennungen Berlins. Seit den 1980er Jahren fordern Initiativen, den Namen des Kolonisators Carl Peters aus dem Stadtbild zu entfernen. 2016 beginnt ein formales Verfahren — mit einem ungewöhnlich offenen Beteiligungsformat.',
+    context:'<p>Carl Peters (1856–1918) ließ afrikanische Bedienstete willkürlich hinrichten und wurde deshalb vom Kaiserreich aus dem Dienst entlassen. Die Benennung der Allee erfolgte 1935. Eine „Umwidmung" auf den Stadtverordneten Hans Peters 1986 war nach Einschätzung der Senatsverwaltung nicht rechtswirksam.</p>',
+    timeline:[
+      {label:'1980er Jahre',desc:'Erste Forderungen von Initiativen nach Umbenennung. Kein formelles Ergebnis.'},
+      {label:'März 2016',desc:'BVV-Beschluss: offenes Beteiligungsverfahren für Petersallee, Lüderitzstraße, Nachtigalplatz.'},
+      {label:'Dezember 2016',desc:'Mitte Museum schreibt Anwohner*innen an. 192 Namensvorschläge gehen ein.'},
+      {label:'2017',desc:'10-köpfige Jury tagt achtmal — wird nach Kontroversen durch ein Gutachterverfahren ersetzt.'},
+      {label:'1. März 2018',desc:'Öffentliche Informationsveranstaltung im Rathaus Tiergarten, Mathilde-Jacob-Platz 1.'},
+      {label:'April 2018',desc:'BVV-Beschluss: Umbenennung beider Abschnitte der Petersallee.'},
+      {label:'April 2024',desc:'OVG Berlin-Brandenburg weist letzte Klage ab. Umbenennung rechtskräftig.'},
+    ],
+    reasons:[
+      {id:'colonial',label:'NS-zeitliche Benennung einer kolonialbelasteten Person',desc:'Die Benennung erfolgte 1935. Carl Peters war für Kolonialverbrechen bekannt und wurde damals bewusst als Held geehrt.',valid:true},
+      {id:'rewidmung',label:'Umwidmung auf Hans Peters (1986) reicht aus',desc:'Die Straße wurde 1986 auf einen anderen Peters umgewidmet — das sollte formal genügen.',valid:false,context:'Die Senatsverwaltung hat klargestellt: Ein Wechsel des Ergänzungsschilds stellt keine rechtswirksame Umbenennung nach dem Berliner Straßengesetz dar.'},
+      {id:'image',label:'Schlechter Ruf beschädigt den Bezirk',desc:'Der Name Carl Peters beschädigt das Ansehen Weddings.',valid:false,context:'Reputationsgründe tragen rechtlich keine Umbenennung. Die AV Straßengesetz verlangt einen konkreten inhaltlichen Bezug — keine Imagefrage.'},
+    ],
+    histTitle:'Historische Einordnung: Carl Peters',
+    histIntro:'Mehrere Fraktionen beauftragten unabhängige Wissenschaftler*innen — mit unterschiedlichen Schwerpunkten und Schlussfolgerungen.',
+    histFindings:[
+      {who:'Befund Kolonialgewalt',text:'"Peters ließ afrikanische Bedienstete wegen geringfügiger Vergehen hinrichten und wurde dafür 1897 vom Kaiserreich aus dem Dienst entlassen."'},
+      {who:'Befund Benennung 1935',text:'"Die Allee erhielt den Namen unter nationalsozialistischer Stadtpolitik. Peters galt dem NS-Regime als Vorbild für kolonialen Expansionismus."'},
+      {who:'Gegenposition (AfD-Fraktion)',text:'"Die Umbenennung tilgt Geschichte. Ein erklärendes Zusatzschild würde den Kontext sichtbar machen, ohne den historischen Namen zu entfernen."'},
+    ],
+    histConclusion:'Historische Fakten wurden von allen Seiten anerkannt. Die Schlussfolgerungen unterschieden sich — je nach Verständnis der Funktion von Straßennamen im öffentlichen Raum.',
+    histRule:'<p><strong>AV §5 Berliner Straßengesetz:</strong> Umbenennung zulässig bei „Bezug auf Kolonialismus, sofern Straßen nach Wegbereitern und Verfechtern von Kolonialismus, Sklaverei und rassistisch-imperialistischen Ideologien benannt wurden."</p>',
+    partIntro:'Das Verfahren wurde als Bürgerbeteiligungsprozess konzipiert. Wer darf mitsprechen — und mit welchem Gewicht?',
+    participants:[
+      {id:'bvv',name:'Bezirksverordnetenversammlung',role:'Pflichtbeteiligt — trifft Endentscheidung',required:true},
+      {id:'ba',name:'Bezirksamt Mitte / Mitte Museum',role:'Pflichtbeteiligt — koordiniert Verfahren',required:true},
+      {id:'jury',name:'Jury / Gutachter*innen',role:'Pflichtbeteiligt — bewertet Vorschläge',required:true},
+      {id:'diaspora',name:'Afrikanische Diaspora-Organisationen',role:'Optional — als direkt Betroffene',required:false},
+      {id:'anw',name:'Anwohner*innen (offene Einreichung)',role:'Optional — 192 Vorschläge eingegangen',required:false},
+    ],
+    namesIntro:'Das Verfahren brachte 192 Namensvorschläge hervor. Kriterium laut BVV: Personen der (post-)kolonialen Emanzipationsbewegung, insbesondere Frauen. Nicht alle Optionen sind formell zulässig.',
+    names:[
+      {id:'mungunda',name:'Anna-Mungunda-Allee',years:'Anna Kakurukaze Mungunda',desc:'Namibische Widerstandskämpferin gegen die Apartheid. Direkter Bezug zur deutschen Kolonialgeschichte in Namibia.',valid:true},
+      {id:'maji',name:'Maji-Maji-Allee',years:'Kein Personenbezug',desc:'Benannt nach dem Schlachtruf des Aufstands gegen deutsche Kolonialherrschaft in Tansania 1905–07. Kollektive Erinnerung.',valid:true},
+      {id:'makeba',name:'Miriam-Makeba-Allee',years:'Miriam Makeba, 1932–2008',desc:'Südafrikanische Sängerin und Antiapartheidaktivistin. Kein direkter Bezug zur deutschen Kolonialgeschichte.',valid:true},
+      {id:'keep',name:'Petersallee mit Zusatzschild',years:'—',desc:'Name bleibt — ein erklärendes Schild thematisiert Carl Peters.',valid:true},
+      {id:'audre',name:'Audre-Lorde-Allee',years:'Audre Lorde, 1934–1992',desc:'Schwarze amerikanische Dichterin. Gut dokumentierter Berlin-Bezug: lebte und lehrte in den 1980ern in West-Berlin.',valid:true},
+    ],
+    conflictTitle:'Stimmen aus der BVV-Debatte',
+    conflictIntro:'Die Fraktionen hatten unterschiedliche Vorstellungen — nicht nur vom Namen, sondern vom Verfahren selbst.',
+    voices:[
+      {who:'Fraktion Grüne',text:'"Maji-Maji — ein Name, der den antikolonialen Widerstand direkt sichtbar macht."'},
+      {who:'Fraktion SPD',text:'"Anna Mungunda: eine Frau, die gekämpft hat. Dieser Name erzählt eine Geschichte, nicht nur ein Datum."'},
+      {who:'Fraktion AfD',text:'"Wir lehnen die Umbenennung ab. Ein Zusatzschild hätte gereicht."'},
+      {who:'Anwohnerin',text:'"Ich habe einen Namen vorgeschlagen. Ich weiß nicht, warum er nicht auf der Shortlist gelandet ist."'},
+    ],
+    conflictNote:'Aus 192 Vorschlägen wurden am Ende drei Namen. Was mit den anderen 189 passiert ist, hat das Verfahren nicht vollständig beantwortet.',
+    decisions:[
+      {id:'mungunda',label:'Anna-Mungunda-Allee',detail:'Empfehlung von SPD, Linke und Grüne. Historisch beschlossen am 19. April 2018.'},
+      {id:'maji',label:'Maji-Maji-Allee',detail:'Kein Personenbezug — kollektive Erinnerung.'},
+      {id:'makeba',label:'Miriam-Makeba-Allee',detail:'Kein direkter Bezug zur deutschen Kolonialgeschichte.'},
+      {id:'keep',label:'Petersallee mit Zusatzschild',detail:'Name bleibt — erklärendes Schild wird hinzugefügt.'},
+    ],
+    results:{
+      mungunda:{title:'Anna-Mungunda-Allee',summary:'BVV Mitte beschließt die Umbenennung des nördlichen Abschnitts.',signStreet:'Anna-Mungunda-Allee',signSub:'Anna Kakurukaze Mungunda · Widerstand gegen Apartheid',reflection:'So hat die BVV Mitte am 19. April 2018 entschieden. Was das Verfahren zeigt: Partizipation bedeutet nicht, dass alle Stimmen gleich viel wiegen.',source:'Quellen: BVV-Beschluss DS 1118/V, 19.4.2018. OVG Berlin-Brandenburg, Az. OVG 1 N 75/22, April 2024.'},
+      maji:{title:'Maji-Maji-Allee',summary:'BVV Mitte beschließt die Umbenennung des südlichen Abschnitts.',signStreet:'Maji-Maji-Allee',signSub:'Maji-Maji · Aufstand gegen dt. Kolonialherrschaft 1905–07',reflection:'Der Name erinnert an kollektiven Widerstand — nicht an eine Einzelperson. Das war in Berlin ungewöhnlich und ist bis heute nicht unumstritten.',source:'Quellen: BVV-Beschluss DS 1118/V, 19.4.2018.'},
+      makeba:{title:'Miriam-Makeba-Allee',summary:'Die BVV entscheidet sich für Miriam Makeba.',signStreet:'Miriam-Makeba-Allee',signSub:'Miriam Makeba, 1932–2008 · Antiapartheidaktivistin',reflection:'Im realen Verfahren wurde Makeba diskutiert, aber nicht beschlossen. Eine andere Mehrheit hätte anders entscheiden können.',source:'Quellen: Bezirksamt Mitte, Verfahrensdokumentation 2016–2018.'},
+      keep:{title:'Petersallee mit Zusatzschild',summary:'Der Name bleibt. Ein erklärendes Zusatzschild wird angebracht.',signStreet:null,reflection:'Diese Position blieb in der Minderheit. Ob ein Zusatzschild eine Ehrung aufhebt oder nur kontextualisiert, ist nicht abschließend geklärt.',source:'Quellen: BVV-Protokolle, Bezirksamt Mitte, 2016–2018.'},
+    }
+  },
+  {
+    id:'kluckstrasse',
+    tag:'Szenario 3 — NS-Zeit und Demokratiegeschichte',
+    title:'Kluckstraße, Berlin-Tiergarten',
+    intro:'Die Kluckstraße in Tiergarten-Süd wurde 1935 nach General Alexander von Kluck benannt. Alle benachbarten NS-zeitlichen Umbenennungen wurden nach 1945 rückgängig gemacht — die Kluckstraße nicht. Warum, ist nicht dokumentiert.',
+    context:'<p>Alexander von Kluck (1846–1934) war Oberbefehlshaber des deutschen Westheeres 1914. In seinen Schriften nach dem Krieg diffamierte er die Weimarer Demokratie und forderte einen „starken Führer". Er starb 1934, ein Jahr nach der Machtergreifung.</p>',
+    timeline:[
+      {label:'23. Juni 2021',desc:'Die Landesarbeitsgemeinschaft Schwule Juristen stellt eine Anregung zur Umbenennung beim Bezirksamt Mitte.'},
+      {label:'2021–2024',desc:'Historisches Gutachten zu Kluck und möglichen Namensgeber*innen.'},
+      {label:'11. November 2025',desc:'Bezirksamt Mitte beschließt Umbenennung in Anita-Augspurg-Straße.'},
+      {label:'23. Mai 2026',desc:'Umbenennung wirksam — Tag des Grundgesetzes. Bewusst gewähltes Datum.'},
+    ],
+    reasons:[
+      {id:'ns_anti',label:'NS-zeitliche Benennung eines Antidemokraten',desc:'Kluck wurde 1935 geehrt. Seine Schriften vertreten antidemokratische Positionen und bereiten NS-Ideologie vor.',valid:true},
+      {id:'ww1',label:'Kriegsverantwortung im Ersten Weltkrieg',desc:'Kluck trug Verantwortung für den Einmarsch in das neutrale Belgien und damit verbundene Kriegsverbrechen.',valid:false,context:'Militärische Verantwortung im Ersten Weltkrieg allein begründet keine Umbenennung. Die AV §5 verlangt einen spezifischen Bezug zur NS-Zeit.'},
+      {id:'female',label:'Erhöhung des Frauenanteils im Straßenbild',desc:'Die Straße soll nach einer Frau benannt werden, weil Frauen im Berliner Straßenbild stark unterrepräsentiert sind.',valid:false,context:'Das Gleichstellungsziel ist ein Kriterium bei der Namenswahl — aber kein eigenständiger Umbenennungsgrund. Die Begründung muss sich auf die zu ersetzende Person beziehen.'},
+    ],
+    histTitle:'Gutachten: Alexander von Kluck',
+    histIntro:'Das Gutachten untersuchte Klucks publizistische Tätigkeit nach dem Ersten Weltkrieg.',
+    histFindings:[
+      {who:'Antidemokratische Schriften',text:'"Kluck bezeichnete die parlamentarische Demokratie als unfähig zur Staatsführung: ›Ein Übermaß politischer Rechte erzieht den unreifen Staatsbürger nicht zur Selbstzucht.‹ (Wanderjahre, S. 5)"'},
+      {who:'Forderung nach starker Führung',text:'"Kluck beschrieb die Notwendigkeit eines ›Mannes von Eisen‹ als Führerfigur (S. 195) — eine Formulierung, die im Kontext der frühen 1930er Jahre eine klare Richtung hatte."'},
+      {who:'Nicht geklärtes Schweigen nach 1945',text:'"Alle benachbarten NS-zeitlichen Umbenennungen wurden nach 1945 revidiert — die Kluckstraße nicht. Warum, ist aus den Akten nicht rekonstruierbar."'},
+    ],
+    histConclusion:'Das Gutachten sieht den Tatbestand der NS-zeitlichen Ehrung eines Antidemokraten als erfüllt. Ob Kluck ein aktiver NS-Unterstützer war, ist nicht belegt.',
+    histRule:'<p><strong>AV §5, Abs. 2c:</strong> Umbenennung möglich, wenn Straße „nach aktiven Gegnern der Demokratie und geistig-politischen Wegbereitern der NS-Ideologie benannt wurde" und „nach heutigem Demokratieverständnis negativ belastet ist."</p>',
+    partIntro:'Das Verfahren wurde durch eine Initiative eingeleitet und zunächst intern geprüft, bevor es zur BVV-Entscheidung kam.',
+    participants:[
+      {id:'bvv',name:'Bezirksverordnetenversammlung',role:'Pflichtbeteiligt — trifft Endentscheidung',required:true},
+      {id:'ba',name:'Bezirksamt Mitte',role:'Pflichtbeteiligt — zuständige Fachbehörde',required:true},
+      {id:'lag',name:'LAG Schwule Juristen',role:'Pflichtbeteiligt — Antragstellende Initiative',required:true},
+      {id:'anw',name:'Anwohner*innen Tiergarten',role:'Optional — direkt Betroffene',required:false},
+      {id:'hist',name:'Historiker*innen',role:'Optional — Fachgutachten',required:false},
+    ],
+    namesIntro:'Die Gleichstellungsrichtlinie gilt auch hier. Das Datum der Wirksamkeit — 23. Mai, Tag des Grundgesetzes — war bei der Namenswahl mitgedacht. Nicht alle Optionen sind formell zulässig.',
+    names:[
+      {id:'augspurg',name:'Anita-Augspurg-Straße',years:'Anita Augspurg, 1857–1943',desc:'Erste promovierte Juristin Deutschlands. Gründerin des Deutschen Vereins für Frauenstimmrecht (1902). Pazifistin. 1933 ausgebürgert.',valid:true},
+      {id:'heymann',name:'Lida-Gustava-Heymann-Straße',years:'Lida Gustava Heymann, 1868–1943',desc:'Lebenspartnerin und Weggefährtin Augspurgs. Frauenrechtlerin und Pazifistin. 1933 ausgebürgert.',valid:true},
+      {id:'dohm',name:'Hedwig-Dohm-Straße',years:'Hedwig Dohm, 1831–1919',desc:'Eine der ersten deutschen Feministinnen. In Berlin geboren, dort ihr ganzes Leben gelebt.',valid:true},
+      {id:'keep',name:'Kluckstraße mit Zusatzschild',years:'—',desc:'Der Name bleibt. Ein erklärendes Schild macht Klucks antidemokratische Haltung sichtbar.',valid:true},
+      {id:'alive3',name:'Kristina-Hänel-Straße',years:'*1956',desc:'Ärztin und Aktivistin für Schwangerschaftsabbruchrecht. Lebt noch.',valid:false,context:'Berliner Benennungsrichtlinie: Keine Benennung nach lebenden Personen.'},
+    ],
+    conflictTitle:'Stimmen aus dem Verfahren',
+    conflictIntro:'Das Verfahren hat eine unerwartete Dimension: Nicht der zu ersetzende Name war das Hauptthema — sondern das Datum.',
+    voices:[
+      {who:'LAG Schwule Juristen',text:'"Anita Augspurg steht für alles, wofür das Grundgesetz steht. Das Datum ist kein Zufall."'},
+      {who:'Anwohnerin',text:'"Ich hätte mir gewünscht, dass man uns früher informiert hat. Ich habe von der Umbenennung aus der Zeitung erfahren."'},
+      {who:'Historikerin',text:'"Augspurg ist eine gute Wahl — aber es gibt viele Frauen, die im Berliner Straßenbild fehlen."'},
+      {who:'Mitarbeiter, Bezirksamt Mitte',text:'"Der 23. Mai war uns wichtig. Das ist kein Symbolismus um des Symbolismus willen."'},
+    ],
+    conflictNote:'Die Umbenennung tritt am 23. Mai 2026 in Kraft — dem Tag des Grundgesetzes, drei Tage nach Eröffnung dieser Ausstellung.',
+    decisions:[
+      {id:'augspurg',label:'Anita-Augspurg-Straße',detail:'Historisch beschlossen. Wirksamkeit: 23. Mai 2026, Tag des Grundgesetzes.'},
+      {id:'heymann',label:'Lida-Gustava-Heymann-Straße',detail:'Regelkonforme Alternative — enge Weggefährtin Augspurgs.'},
+      {id:'dohm',label:'Hedwig-Dohm-Straße',detail:'Berliner Feministin, weniger bekannt, stärkerer Lokalbezug.'},
+      {id:'keep',label:'Kluckstraße mit Zusatzschild',detail:'Name bleibt — historischer Kontext durch erklärendes Schild sichtbar.'},
+    ],
+    results:{
+      augspurg:{title:'Anita-Augspurg-Straße',summary:'Bezirksamt Mitte beschließt die Umbenennung am 11. November 2025.',signStreet:'Anita-Augspurg-Straße',signSub:'Anita Augspurg, 1857–1943 · Juristin, Frauenrechtlerin, Pazifistin',reflection:'So hat das Bezirksamt Mitte entschieden. Augspurg wurde nicht nur wegen ihrer Biografie gewählt — sondern auch wegen des Datums. Ob eine Straße ein politisches Statement sein soll, ist eine offene Frage.',source:'Quellen: Bezirksamt Mitte, Beschluss 11.11.2025. Wirksamkeit 23.5.2026.'},
+      heymann:{title:'Lida-Gustava-Heymann-Straße',summary:'Die BVV entscheidet sich für Lida Gustava Heymann.',signStreet:'Lida-Gustava-Heymann-Straße',signSub:'Lida Gustava Heymann, 1868–1943 · Frauenrechtlerin, Pazifistin',reflection:'Heymann und Augspurg kämpften gemeinsam, lebten zusammen, starben im selben Jahr im Exil. Dass die eine bekannter ist als die andere, ist selbst eine historische Frage.',source:'Quellen: Bezirksamt Mitte, 2025.'},
+      dohm:{title:'Hedwig-Dohm-Straße',summary:'Eine Entscheidung für eine weniger bekannte, aber historisch tief verankerte Berlinerin.',signStreet:'Hedwig-Dohm-Straße',signSub:'Hedwig Dohm, 1831–1919 · Feministin, Schriftstellerin',reflection:'Hedwig Dohm war im realen Verfahren kein Kandidat. Das wirft eine grundsätzliche Frage auf: Bevorzugen Umbenennungsverfahren Personen, die bereits bekannt sind?',source:'Quellen: Bezirksamt Mitte, 2025.'},
+      keep:{title:'Kluckstraße mit Zusatzschild',summary:'Der Name bleibt. Ein erklärendes Schild macht Klucks politische Haltung sichtbar.',signStreet:null,reflection:'Auch diese Option hätte vertretbar begründet werden können. Ist Sichtbarmachen dasselbe wie Erinnern?',source:'Quellen: Bezirksamt Mitte, 2025.'},
+    }
+  }
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PERSONEN-POOL (Basis + wächst durch Nutzungseingaben)
+// ─────────────────────────────────────────────────────────────────────────────
+const BASE_PERSONS = [
+  {id:'ndumbe',name:'Martha Ndumbe',years:'1902–1945',short:'Schwarze Berlinerin, KZ-Ravensbrück',bio:'In Berlin geboren, Tochter eines kamerunischen Kolonialmigrant*innen. 1944 nach Ravensbrück deportiert, dort gestorben. Berlins erster Stolperstein für eine Schwarze Frau (2021).',suggested:'-Platz'},
+  {id:'mungunda',name:'Anna Mungunda',years:'1919–1959',short:'Namibische Widerstandskämpferin gegen Apartheid',bio:'Widerstandskämpferin gegen die südafrikanische Apartheid-Herrschaft in Namibia. Die nördliche Petersallee trägt seit 2022 ihren Namen.',suggested:'-Allee'},
+  {id:'augspurg',name:'Anita Augspurg',years:'1857–1943',short:'Erste promovierte Juristin Deutschlands, Pazifistin',bio:'Erste promovierte Juristin Deutschlands. Gründerin des Deutschen Vereins für Frauenstimmrecht (1902). 1933 ausgebürgert, gestorben im Schweizer Exil.',suggested:'-Straße'},
+  {id:'amo',name:'Anton Wilhelm Amo',years:'~1703–~1759',short:'Erster Schwarzer Philosoph an deutschen Universitäten',bio:'Aus Ghana stammend, lehrte er in Halle und Wittenberg. Die M*straße in Mitte trägt seit August 2025 seinen Namen.',suggested:'-Straße'},
+  {id:'fredericks',name:'Cornelius Fredericks',years:'~1864–1907',short:'Widerstandsführer gegen deutsche Kolonialherrschaft in Namibia',bio:'Führer der !Aman und Widerstandskämpfer gegen die deutsche Kolonialherrschaft. Die Lüderitzstraße trägt seit 2022 seinen Namen.',suggested:'-Straße'},
+  {id:'jansen',name:'Fasia Jansen',years:'1929–1997',short:'Schwarze deutsch-liberianische Sängerin und Friedensaktivistin',bio:'Sängerin und Friedensaktivistin. Sie setzte sich ihr Leben lang gegen Rassismus und für Gleichberechtigung ein.',suggested:'-Straße'},
+  {id:'mangabell',name:'Rudolf Manga Bell',years:'1873–1914',short:'König der Duala, hingerichtet von deutschen Kolonialherren',bio:'Widersetzte sich deutschen Kolonialplanungen in Kamerun und wurde 1914 in einem Scheinprozess gehängt. Der Nachtigalplatz heißt seit 2022 Manga-Bell-Platz.',suggested:'-Platz'},
+  {id:'heymann',name:'Lida Gustava Heymann',years:'1868–1943',short:'Frauenrechtlerin und Pazifistin',bio:'Weggefährtin und Lebenspartnerin von Anita Augspurg. Gemeinsam gründeten sie die Zeitschrift „Frau im Staat" und wurden 1933 ausgebürgert.',suggested:'-Straße'},
+  {id:'maathai',name:'Wangari Maathai',years:'1940–2011',short:'Erste afrikanische Friedensnobelpreisträgerin',bio:'Erhielt 2004 als erste Afrikanerin den Friedensnobelpreis für ihr Wiederaufforstungsprogramm und ihren Widerstand gegen Diktatur.',suggested:'-Allee'},
+  {id:'dibobe',name:'Martin Dibobe',years:'1876–~1922',short:'Kamerunischer Berliner, Zugführer der Hochbahn, Petitionär',bio:'Kam 1896 nach Berlin, wurde Zugführer bei der Berliner Hochbahn und reichte eine Petition für Bürgerrechte der Kolonisierten an den Reichstag ein.',suggested:'-Weg'},
+  {id:'ayim',name:'May Ayim',years:'1960–1996',short:'Afrodeutsche Dichterin und Aktivistin',bio:'Dichterin und Aktivistin, die die Schwarze Bewegung in Deutschland prägte. Protestierte in den 1990ern gegen rassistische Straßennamen.',suggested:'-Ufer'},
+  {id:'dohm',name:'Hedwig Dohm',years:'1831–1919',short:'Berliner Feministin und Schriftstellerin',bio:'In Berlin geboren, dort ihr ganzes Leben gelebt. Eine der ersten deutschen Feministinnen.',suggested:'-Straße'},
+  {id:'emilybell',name:'Emily Duala Manga Bell',years:'~1880–1914',short:'Königin der Duala, antikolonialer Widerstand',bio:'Stand gemeinsam mit Rudolf Manga Bell im Widerstand gegen die deutschen Kolonialherren in Kamerun.',suggested:'-Straße'},
+  {id:'vera',name:'Vera Heyer',years:'1946–1995',short:'Schwarze deutsche Bürgerrechtlerin',bio:'Schwarze deutsche Bürgerrechtlerin.',suggested:'-Platz'},
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STORAGE KEYS
+// ─────────────────────────────────────────────────────────────────────────────
+const GALLERY_KEY    = 'rts_gallery_v1';
+const POOL_KEY       = 'rts_person_pool_v1';
+
+let gallery      = [];
+let personPool   = [];  // kombinierter Pool aus BASE_PERSONS + user-added
+
+function loadStorage() {
+  try {
+    const rawG = localStorage.getItem(GALLERY_KEY);
+    gallery = rawG ? JSON.parse(rawG) : [];
+  } catch(e) { gallery = []; }
+
+  try {
+    const rawP = localStorage.getItem(POOL_KEY);
+    const saved = rawP ? JSON.parse(rawP) : [];
+    // Merge: base first, dann user-added (keine Duplikate per id)
+    const baseIds = new Set(BASE_PERSONS.map(p => p.id));
+    const userAdded = saved.filter(p => !baseIds.has(p.id));
+    personPool = [...BASE_PERSONS, ...userAdded];
+  } catch(e) { personPool = [...BASE_PERSONS]; }
+}
+
+function saveGallery() {
+  try { localStorage.setItem(GALLERY_KEY, JSON.stringify(gallery)); } catch(e) {}
+}
+
+function savePool() {
+  // Nur user-added speichern
+  const baseIds = new Set(BASE_PERSONS.map(p => p.id));
+  const userAdded = personPool.filter(p => !baseIds.has(p.id));
+  try { localStorage.setItem(POOL_KEY, JSON.stringify(userAdded)); } catch(e) {}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// APP STATE
+// ─────────────────────────────────────────────────────────────────────────────
+let state = { scenario:null, selectedReason:null, selectedParts:[], selectedName:null, selectedDecision:null, idleTimer:null, idleSec:0 };
+let dState = { type:null, personId:null, subline:'', reason:'', isCustom:false };
+let currentDesignerPool = []; // 10 zufällig gewählte + 1 Freitext
+
+const SCREENS = ['s-scenario','s-reason','s-history','s-participants','s-names','s-conflict','s-decision','s-result','s-designer'];
+const STEP_LABELS = ['Szenario','1 — Antrag','2 — Prüfung','3 — Beteiligung','4 — Namen','5 — Debatte','6 — Entscheidung','Ergebnis','Ihr Schild'];
+const STEPS_PROGRESS = [5,16,30,45,60,75,90,100,100];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────────────────────────────────────
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = SCREENS.indexOf(id);
+  if (idx >= 0) {
+    document.getElementById('step-label').textContent = STEP_LABELS[idx];
+    document.getElementById('prog-fill').style.width = STEPS_PROGRESS[idx] + '%';
+  } else {
+    document.getElementById('step-label').textContent = '';
+  }
+  const inSim = SCREENS.includes(id) || id === 's-start';
+  document.getElementById('reset-btn').style.display = (id !== 's-start' && inSim) ? '' : 'none';
+  document.getElementById('nav-gallery').style.display = (id !== 's-start') ? '' : 'none';
+  resetIdle();
+  window.scrollTo(0, 0);
+}
+
+function goGallery() {
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('step-label').textContent = '';
+  renderGallery();
+  go('s-gallery');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SZENARIO
+// ─────────────────────────────────────────────────────────────────────────────
+function startApp() {
+  state.scenario = SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
+  state.selectedReason = null; state.selectedParts = []; state.selectedName = null; state.selectedDecision = null;
+  populateScenario();
+  go('s-scenario');
+  startIdle();
+}
+
+function populateScenario() {
+  const s = state.scenario;
+  document.getElementById('sc-tag').textContent = s.tag;
+  document.getElementById('sc-title').textContent = s.title;
+  document.getElementById('sc-intro').textContent = s.intro;
+  document.getElementById('sc-context').innerHTML = s.context;
+  document.getElementById('sc-timeline').innerHTML = s.timeline.map(t =>
+    `<div class="tl-item"><div class="tl-dot"></div><div class="tl-label">${t.label}</div><div class="tl-desc">${t.desc}</div></div>`
+  ).join('');
+
+  // Alle Optionen gleich aussehen lassen — kein invalid-Styling
+  document.getElementById('reason-list').innerHTML = s.reasons.map(r =>
+    `<div class="choice-btn" id="r-${r.id}"
+      onclick="selReason('${r.id}',${r.valid},'${(r.context||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${r.label.replace(/'/g,"\\'")}')">
+      <span class="c-label">${r.label}</span><span class="c-desc">${r.desc}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('hist-title').textContent = s.histTitle;
+  document.getElementById('hist-intro').textContent = s.histIntro;
+  document.getElementById('hist-findings').innerHTML = '<div class="voices-header">Befunde</div>' +
+    s.histFindings.map(f => `<div class="voice"><div class="voice-who">${f.who}</div><div class="voice-text">${f.text}</div></div>`).join('');
+  document.getElementById('hist-conclusion').textContent = s.histConclusion;
+  document.getElementById('hist-rule').innerHTML = s.histRule;
+
+  document.getElementById('part-intro').textContent = s.partIntro || '';
+  document.getElementById('part-grid').innerHTML = s.participants.map(p =>
+    `<div class="part-card${p.required ? ' required' : ''}" id="pt-${p.id}"
+      onclick="${p.required ? '' : `togglePart('${p.id}')`}">
+      <${p.required ? 'span class="req-badge">Pflicht</span>' : 'span class="sel-badge">✓</span>'}
+      <span class="p-name">${p.name}</span><span class="p-role">${p.role}</span>
+    </div>`
+  ).join('');
+  state.selectedParts = s.participants.filter(p => p.required).map(p => p.id);
+
+  document.getElementById('names-intro').textContent = s.namesIntro;
+  // Alle Optionen gleich aussehen lassen
+  document.getElementById('name-list').innerHTML = s.names.map(n =>
+    `<div class="name-opt" id="n-${n.id}"
+      onclick="selName('${n.id}',${n.valid},'${(n.context||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${n.name.replace(/'/g,"\\'")}')">
+      <span class="n-name">${n.name}</span>
+      <span class="n-years">${n.years}</span>
+      <span class="n-desc">${n.desc}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('conf-title').textContent = s.conflictTitle;
+  document.getElementById('conf-intro').textContent = s.conflictIntro;
+  document.getElementById('conf-voices').innerHTML = '<div class="voices-header">Aus dem Verfahren</div>' +
+    s.voices.map(v => `<div class="voice"><div class="voice-who">${v.who}</div><div class="voice-text">${v.text}</div></div>`).join('');
+  document.getElementById('conf-note').textContent = s.conflictNote;
+
+  document.getElementById('dec-intro').textContent = 'Sie haben die Debatte verfolgt. Jetzt stimmt die BVV ab.';
+  document.getElementById('dec-list').innerHTML = s.decisions.map(d =>
+    `<div class="dec-btn" id="d-${d.id}" onclick="selDecision('${d.id}')">
+      <span class="d-label">${d.label}</span><span class="d-detail">${d.detail}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('btn-reason').disabled = true;
+  document.getElementById('btn-name').disabled = true;
+  document.getElementById('btn-dec').disabled = true;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────────────────────────────────────
+function showToast(title, body, rule) {
+  document.getElementById('toast-rule').textContent = rule || 'Hinweis zum Verfahren';
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-body').textContent = body;
+  document.getElementById('toast-overlay').classList.add('show');
+  resetIdle();
+}
+function closeToast() {
+  document.getElementById('toast-overlay').classList.remove('show');
+  resetIdle();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INTERAKTIONEN SIMULATOR
+// ─────────────────────────────────────────────────────────────────────────────
+function selReason(id, valid, ctx, label) {
+  document.querySelectorAll('#reason-list .choice-btn').forEach(b => b.classList.remove('sel', 'warned'));
+  if (!valid) {
+    document.getElementById('r-' + id).classList.add('warned');
+    showToast(label, ctx || 'Diese Begründung ist nach den Berliner Richtlinien nicht ausreichend.', 'Warum diese Option nicht weiterhilft');
+    state.selectedReason = null;
+    document.getElementById('btn-reason').disabled = true;
+  } else {
+    document.getElementById('r-' + id).classList.add('sel');
+    document.getElementById('btn-reason').disabled = false;
+    state.selectedReason = id;
+  }
+  resetIdle();
+}
+
+function selName(id, valid, ctx, name) {
+  document.querySelectorAll('.name-opt').forEach(n => n.classList.remove('sel', 'warned'));
+  if (!valid) {
+    document.getElementById('n-' + id).classList.add('warned');
+    showToast(name, ctx || 'Diese Option ist nach den Berliner Benennungsrichtlinien nicht zulässig.', 'Warum diese Option nicht zulässig ist');
+    // btn-name bleibt disabled wenn keine gültige Wahl
+  } else {
+    document.getElementById('n-' + id).classList.add('sel');
+    state.selectedName = id;
+    document.getElementById('btn-name').disabled = false;
+  }
+  resetIdle();
+}
+
+function togglePart(id) {
+  const card = document.getElementById('pt-' + id);
+  if (card.classList.contains('selected')) {
+    card.classList.remove('selected');
+    state.selectedParts = state.selectedParts.filter(p => p !== id);
+  } else {
+    card.classList.add('selected');
+    state.selectedParts.push(id);
+  }
+  resetIdle();
+}
+
+function submitPart() {
+  const req = state.scenario.participants.filter(p => p.required).map(p => p.id);
+  if (req.some(r => !state.selectedParts.includes(r))) {
+    document.getElementById('err-part').classList.add('show'); return;
+  }
+  document.getElementById('err-part').classList.remove('show');
+  go('s-names');
+}
+
+function selDecision(id) {
+  document.querySelectorAll('.dec-btn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('d-' + id).classList.add('sel');
+  state.selectedDecision = id;
+  document.getElementById('btn-dec').disabled = false;
+  resetIdle();
+}
+
+function submitDecision() {
+  if (!state.selectedDecision) return;
+  const s = state.scenario;
+  const r = s.results[state.selectedDecision];
+  document.getElementById('res-title').textContent = r.title;
+  document.getElementById('res-card').innerHTML =
+    `<div class="r-label">Ihre Entscheidung</div>
+     <div class="r-value">${r.summary}</div>
+     <div class="r-note">${s.tag}</div>`;
+  document.getElementById('res-reflection').textContent = r.reflection;
+  document.getElementById('res-source').textContent = r.source || '';
+  // Schildgestalter mit gewähltem Namen vorbelegen
+  prepareDesigner(r);
+  go('s-result');
+}
+
+function resetApp() {
+  clearInterval(state.idleTimer);
+  state = { scenario:null, selectedReason:null, selectedParts:[], selectedName:null, selectedDecision:null, idleTimer:null, idleSec:0 };
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('idle-bar').style.width = '100%';
+  document.getElementById('reset-btn').style.display = 'none';
+  document.getElementById('nav-gallery').style.display = 'none';
+  document.getElementById('step-label').textContent = '';
+  go('s-start');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SCHILDGESTALTER
+// ─────────────────────────────────────────────────────────────────────────────
+function prepareDesigner(result) {
+  dState = { type: null, personId: null, subline: '', reason: '', isCustom: false };
+
+  // Zufälligen Pool aus 10 Personen zusammenstellen
+  const shuffled = [...personPool].sort(() => Math.random() - 0.5);
+  currentDesignerPool = shuffled.slice(0, 10);
+
+  buildDesignerPersonList();
+  dReset();
+
+  // Wenn ein Schild aus dem Ergebnis stammt, Typ vorausfüllen
+  if (result && result.signStreet) {
+    const types = ['-Straße', '-Allee', '-Platz', '-Ufer', '-Weg'];
+    for (const t of types) {
+      if (result.signStreet.endsWith(t)) {
+        dState.type = t;
+        document.querySelectorAll('.type-btn').forEach(b => {
+          b.classList.toggle('sel', b.textContent === t);
+        });
+        break;
+      }
+    }
+  }
+  dUpdatePreview();
+  document.getElementById('g-pool-count').textContent = personPool.length;
+}
+
+function buildDesignerPersonList() {
+  const el = document.getElementById('d-person-list');
+  el.innerHTML = currentDesignerPool.map(p =>
+    `<button class="pb" id="dpb-${p.id}" onclick="dSelPerson('${p.id}')">
+      <div class="pb-name">${p.name}</div>
+      <div class="pb-years">${p.years}</div>
+      <div class="pb-short">${p.short}</div>
+    </button>`
+  ).join('') +
+  // 11. Option: Freitext
+  `<button class="pb pb-custom" id="dpb-custom" onclick="toggleCustomForm()">
+    <div class="pb-name">+ Eigene Person eintragen</div>
+    <div class="pb-short">Eine Person, die Sie im Berliner Straßenbild vermissen</div>
+  </button>`;
+}
+
+function toggleCustomForm() {
+  const form = document.getElementById('custom-form');
+  form.classList.toggle('show');
+  if (form.classList.contains('show')) {
+    document.querySelectorAll('.pb').forEach(b => b.classList.remove('sel'));
+    document.getElementById('dpb-custom').classList.add('sel');
+    dState.personId = null;
+    dState.isCustom = true;
+    dUpdatePreview();
+    dCheckReady();
+  }
+}
+
+function addCustomPerson() {
+  const name  = document.getElementById('cp-name').value.trim();
+  const years = document.getElementById('cp-years').value.trim();
+  const short = document.getElementById('cp-short').value.trim();
+  if (!name) { showToast('Name fehlt', 'Bitte geben Sie mindestens einen Namen ein.', 'Hinweis'); return; }
+
+  const newId = 'custom_' + Date.now();
+  const newPerson = {
+    id: newId,
+    name,
+    years: years || '',
+    short: short || '',
+    bio: short || '',
+    suggested: '-Straße',
+    isUserAdded: true
+  };
+
+  personPool.push(newPerson);
+  savePool();
+
+  // In aktuelle Liste einfügen und auswählen
+  currentDesignerPool.unshift(newPerson);
+  buildDesignerPersonList();
+
+  document.getElementById('custom-form').classList.remove('show');
+  document.getElementById('cp-name').value = '';
+  document.getElementById('cp-years').value = '';
+  document.getElementById('cp-short').value = '';
+
+  dSelPerson(newId);
+  document.getElementById('g-pool-count').textContent = personPool.length;
+
+  showToast(name + ' wurde hinzugefügt', 'Die Person ist nun für alle zukünftigen Besuchenden im Pool und kann bei der Schildgestaltung gewählt werden.', 'Personenpool');
+}
+
+function dSelPerson(id) {
+  dState.personId = id;
+  dState.isCustom = false;
+  document.querySelectorAll('.pb').forEach(b => b.classList.remove('sel'));
+  const el = document.getElementById('dpb-' + id);
+  if (el) el.classList.add('sel');
+  document.getElementById('custom-form').classList.remove('show');
+
+  if (!dState.type) {
+    const p = personPool.find(x => x.id === id);
+    const sug = p?.suggested || '-Straße';
+    dState.type = sug;
+    document.querySelectorAll('.type-btn').forEach(b => { b.classList.toggle('sel', b.textContent === sug); });
+  }
+  dUpdatePreview(); dCheckReady();
+}
+
+function dSelectType(t, el) {
+  dState.type = t;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  dUpdatePreview(); dCheckReady();
+}
+
+function dUpdateSubline(el) {
+  dState.subline = el.value;
+  document.getElementById('d-sub-left').textContent = 60 - el.value.length;
+  dUpdatePreview();
+}
+
+function dUpdateReason(el) {
+  dState.reason = el.value;
+  document.getElementById('d-reason-left').textContent = 200 - el.value.length;
+}
+
+function dUpdatePreview() {
+  const p = personPool.find(x => x.id === dState.personId);
+  const name = p ? p.name.replace(/ /g, '-') + (dState.type || '-…') : 'Name-…';
+  document.getElementById('d-sign-name').textContent = name;
+  const sub = document.getElementById('d-sign-sub');
+  if (dState.subline) { sub.textContent = dState.subline; sub.style.display = 'block'; }
+  else { sub.style.display = 'none'; }
+}
+
+function dCheckReady() {
+  document.getElementById('d-btn-add').disabled = !(dState.type && dState.personId);
+}
+
+function dReset() {
+  document.getElementById('d-reason').value = '';
+  document.getElementById('d-subline').value = '';
+  document.getElementById('d-sub-left').textContent = '60';
+  document.getElementById('d-reason-left').textContent = '200';
+  document.getElementById('d-sign-name').textContent = 'Name-…';
+  document.getElementById('d-sign-sub').style.display = 'none';
+  document.getElementById('d-btn-add').disabled = true;
+  dState.subline = '';
+  dState.reason = '';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GALERIE-ABFRAGE
+// ─────────────────────────────────────────────────────────────────────────────
+function goToGalleryAsk() {
+  if (!dState.type || !dState.personId) return;
+  const p = personPool.find(x => x.id === dState.personId);
+  if (!p) return;
+  const fullName = p.name.replace(/ /g, '-') + dState.type;
+  document.getElementById('ask-sign-preview').innerHTML = makeSignHTML(fullName, dState.subline, 'lg');
+  go('s-gallery-ask');
+}
+
+function confirmAddToGallery() {
+  const p = personPool.find(x => x.id === dState.personId);
+  if (!p || !dState.type) return;
+  const entry = {
+    personId: dState.personId,
+    personName: p.name,
+    type: dState.type,
+    subline: dState.subline,
+    reason: dState.reason.trim(),
+    bio: p.bio || '',
+    ts: Date.now()
+  };
+  gallery.unshift(entry);
+  saveGallery();
+  const fullName = p.name.replace(/ /g, '-') + dState.type;
+  document.getElementById('suc-name').textContent = fullName;
+  const sub = document.getElementById('suc-sub');
+  if (dState.subline) { sub.textContent = dState.subline; sub.style.display = 'block'; } else { sub.style.display = 'none'; }
+  go('s-dsuccess');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GALERIE
+// ─────────────────────────────────────────────────────────────────────────────
+function makeSignHTML(fullName, subline, size) {
+  const ns = size === 'lg' ? 20 : 15;
+  const ss = size === 'lg' ? 11 : 10;
+  const pd = size === 'lg' ? '14px 20px 18px' : '10px 14px 13px';
+  return `<div class="sign-preview" style="min-width:${size === 'lg' ? '240px' : '150px'}">
+    <div class="sign-body" style="padding:${pd}">
+      <div class="sign-street" style="font-size:${ns}px">${fullName}</div>
+      ${subline ? `<div class="sign-sub" style="font-size:${ss}px">${subline}</div>` : ''}
+      <div class="sign-district">Berlin-Mitte</div>
+    </div>
+  </div>`;
+}
+
+function renderGallery() {
+  const grid  = document.getElementById('gallery-grid');
+  const empty = document.getElementById('gallery-empty');
+  document.getElementById('g-count').textContent = gallery.length;
+  document.getElementById('g-pool-count').textContent = personPool.length;
+  if (gallery.length === 0) { grid.style.display = 'none'; empty.style.display = 'block'; return; }
+  grid.style.display = 'grid'; empty.style.display = 'none';
+  grid.innerHTML = gallery.map((e, i) => {
+    const fullName = e.personName.replace(/ /g, '-') + e.type;
+    return `<div class="g-card" onclick="showDetail(${i})">
+      <div class="g-sign-wrap">${makeSignHTML(fullName, e.subline, 'sm')}</div>
+      ${e.reason ? `<div class="g-reason"><span class="g-reason-lbl">Warum</span>${e.reason.length > 80 ? e.reason.substring(0,78)+'…' : e.reason}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function showDetail(i) {
+  const e = gallery[i];
+  const fullName = e.personName.replace(/ /g, '-') + e.type;
+  document.getElementById('detail-content').innerHTML = `
+    <div style="display:flex;justify-content:center;margin-bottom:1.5rem">${makeSignHTML(fullName, e.subline, 'lg')}</div>
+    <div class="detail-bio">
+      <div class="detail-bio-name">${e.personName}</div>
+      ${e.subline ? `<div class="detail-bio-years">${e.subline}</div>` : ''}
+      <div class="detail-bio-desc">${e.bio || ''}</div>
+    </div>
+    ${e.reason ? `<div class="detail-reason"><div class="detail-reason-lbl">Warum dieser Name?</div><div class="detail-reason-text">${e.reason}</div></div>` : ''}`;
+  go('s-detail');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// IDLE
+// ─────────────────────────────────────────────────────────────────────────────
+function startIdle() {
+  clearInterval(state.idleTimer);
+  state.idleSec = 0;
+  const LIMIT = 120;
+  state.idleTimer = setInterval(() => {
+    state.idleSec++;
+    const pct = ((LIMIT - state.idleSec) / LIMIT) * 100;
+    document.getElementById('idle-bar').style.width = Math.max(0, pct) + '%';
+    if (state.idleSec >= LIMIT) resetApp();
+  }, 1000);
+}
+function resetIdle() {
+  state.idleSec = 0;
+  document.getElementById('idle-bar').style.width = '100%';
+}
+document.addEventListener('click', resetIdle);
+document.addEventListener('touchstart', resetIdle);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ADMIN (langes Drücken auf Logo — 2 Sekunden)
+// ─────────────────────────────────────────────────────────────────────────────
+let logoTimer = null;
+document.getElementById('logo-btn').addEventListener('mousedown', () => {
+  logoTimer = setTimeout(() => { document.getElementById('admin-overlay').classList.add('show'); }, 2000);
+});
+document.getElementById('logo-btn').addEventListener('mouseup', () => clearTimeout(logoTimer));
+document.getElementById('logo-btn').addEventListener('mouseleave', () => clearTimeout(logoTimer));
+document.getElementById('logo-btn').addEventListener('touchstart', () => {
+  logoTimer = setTimeout(() => { document.getElementById('admin-overlay').classList.add('show'); }, 2000);
+}, { passive: true });
+document.getElementById('logo-btn').addEventListener('touchend', () => clearTimeout(logoTimer));
+
+function closeAdmin() { document.getElementById('admin-overlay').classList.remove('show'); }
+
+function exportGallery() {
+  const blob = new Blob([JSON.stringify(gallery, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'galerie_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportPersonPool() {
+  const baseIds = new Set(BASE_PERSONS.map(p => p.id));
+  const userAdded = personPool.filter(p => !baseIds.has(p.id));
+  const blob = new Blob([JSON.stringify(userAdded, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'personenpool_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function confirmClearGallery() {
+  if (confirm('Galerie wirklich leeren? Diese Aktion kann nicht rückgängig gemacht werden.')) {
+    gallery = [];
+    saveGallery();
+    closeAdmin();
+    renderGallery();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────────────────────
+loadStorage();
+document.getElementById('g-pool-count').textContent = personPool.length;
+</script>
+</body>
+</html>
