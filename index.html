@@ -254,11 +254,14 @@
     <!-- START -->
     <div id="s-start" class="screen active">
       <div class="inner" style="min-height:70vh;display:flex;flex-direction:column;justify-content:center">
-        <div class="logo" style="font-size:13px;margin-bottom:2.5rem;color:var(--teal)">umbenennen?! · Mitte 2026</div>
-        <h1>Rename the Street</h1>
-        <p style="font-size:17px;color:var(--text);margin:0.75rem 0 0.5rem;font-family:var(--serif);line-height:1.6;font-weight:400">Wie entscheidet eine Stadt, welche Namen sie trägt — und welche nicht?</p>
-        <p>Durchlaufen Sie einen Berliner Umbenennungsprozess: Antrag, Gutachten, Beteiligte, Namensauswahl, Debatte, Abstimmung. Alle Schritte sind real — die Entscheidung liegt bei Ihnen.</p>
-        <div class="info-box"><p>Die Szenarien basieren auf dokumentierten Verfahren des Bezirksamts Mitte. Diese Anwendung speichert keine personenbezogenen Daten.</p></div>
+        <div class="logo" style="font-size:13px;margin-bottom:2.5rem;color:var(--teal)">umbenennen?! - Mitte Museum</div>
+        <h1>umbenennen?!</h1>
+        <p style="font-size:17px;color:var(--text);margin:0.75rem 0 0.5rem;font-family:var(--serif);line-height:1.6;font-weight:400">Willkommen zum Umbenennungs-Simulator der Sonderausstellung.
+Straßenumbenennungen sind öffentliche Aushandlungsprozesse: Sie betreffen Geschichte, Erinnerung, Verwaltung und Stadtgesellschaft zugleich. Doch wie läuft ein solches Verfahren eigentlich ab?
+Diese Anwendung lädt dazu ein, einen Berliner Umbenennungsprozess selbst zu durchlaufen — vom Antrag über Gutachten und Beteiligungsverfahren bis zur Abstimmung. Sie übernehmen Entscheidungen, wägen Argumente ab und erleben, wie komplex öffentliche Erinnerungspolitik sein kann.</p>
+        <div class="info-box"><p>Hinweis:
+Die dargestellten Szenarien orientieren sich an dokumentierten Verfahren des Bezirksamts Mitte. Zur besseren Verständlichkeit wurden Abläufe, Rollen und Entscheidungswege vereinfacht und dramaturgisch verdichtet. Die Anwendung bildet amtliche Verfahren daher nicht vollständig ab.
+Es werden keine personenbezogenen Daten gespeichert oder verarbeitet. Die Nutzung der Anwendung erfolgt anonym und DSGVO-konform.</p></div>
         <button class="btn-primary" onclick="startApp()" style="max-width:220px;margin-top:0.5rem">Verfahren beginnen →</button>
         <div style="margin-top:1rem">
           <button class="btn-secondary" onclick="goGallery()" style="width:auto">Galerie entdecken</button>
@@ -464,7 +467,7 @@
       <div class="success-wrap">
         <div class="success-icon">✓</div>
         <div class="success-title">Ihr Schild ist fertig</div>
-        <div class="success-sub">Es wurde nicht zur Galerie hinzugefügt. Wenn Sie möchten, können Sie schauen, was andere gestaltet haben.</div>
+        <div class="success-sub">Es wurde nicht zur Galerie hinzugefügt. Wenn Sie möchten, können Sie trotzdem entdecken, was andere gestaltet haben.</div>
         <div class="btn-row">
           <button class="btn-primary" style="width:auto;padding:10px 24px" onclick="goGallery()">Galerie entdecken →</button>
           <button class="btn-secondary" onclick="resetApp()">Neues Szenario</button>
@@ -477,7 +480,7 @@
       <div class="success-wrap">
         <div class="success-icon">✓</div>
         <div class="success-title">Schild hinzugefügt</div>
-        <div class="success-sub">Ihr Schild ist anonym in der Galerie sichtbar und bleibt für die Dauer der Ausstellung erhalten.</div>
+        <div class="success-sub">Ihr Schild ist anonym in der Galerie sichtbar und bleibt nur für die Dauer der Ausstellung erhalten.</div>
         <div style="display:flex;justify-content:center;margin-bottom:2rem">
           <div class="sign-preview"><div class="sign-body">
             <div class="sign-street" id="suc-name"></div>
@@ -497,7 +500,7 @@
       <div class="gallery-header">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
           <div>
-            <h2 style="margin:0">Galerie der Schilder</h2>
+            <h2 style="margin:0">Galerie der Straßenschilder</h2>
             <p style="margin:4px 0 0;font-size:13px">Alle Schilder entstanden während der Ausstellung — anonym und freiwillig.</p>
           </div>
           <button class="btn-primary" style="width:auto;padding:10px 20px" onclick="go('s-designer')">+ Eigenes Schild gestalten</button>
@@ -646,7 +649,7 @@ const SCENARIOS = [
     histFindings:[
       {who:'Befund Kolonialgewalt',text:'"Peters ließ afrikanische Bedienstete wegen geringfügiger Vergehen hinrichten und wurde dafür 1897 vom Kaiserreich aus dem Dienst entlassen."'},
       {who:'Befund Benennung 1935',text:'"Die Allee erhielt den Namen unter nationalsozialistischer Stadtpolitik. Peters galt dem NS-Regime als Vorbild für kolonialen Expansionismus."'},
-      {who:'Gegenposition (AfD-Fraktion)',text:'"Die Umbenennung tilgt Geschichte. Ein erklärendes Zusatzschild würde den Kontext sichtbar machen, ohne den historischen Namen zu entfernen."'},
+      {who:'Gegenposition',text:'"Die Umbenennung tilgt Geschichte. Ein erklärendes Zusatzschild würde den Kontext sichtbar machen, ohne den historischen Namen zu entfernen."'},
     ],
     histConclusion:'Historische Fakten wurden von allen Seiten anerkannt. Die Schlussfolgerungen unterschieden sich — je nach Verständnis der Funktion von Straßennamen im öffentlichen Raum.',
     histRule:'<p><strong>AV §5 Berliner Straßengesetz:</strong> Umbenennung zulässig bei „Bezug auf Kolonialismus, sofern Straßen nach Wegbereitern und Verfechtern von Kolonialismus, Sklaverei und rassistisch-imperialistischen Ideologien benannt wurden."</p>',
@@ -669,9 +672,9 @@ const SCENARIOS = [
     conflictTitle:'Stimmen aus der BVV-Debatte',
     conflictIntro:'Die Fraktionen hatten unterschiedliche Vorstellungen — nicht nur vom Namen, sondern vom Verfahren selbst.',
     voices:[
-      {who:'Fraktion Grüne',text:'"Maji-Maji — ein Name, der den antikolonialen Widerstand direkt sichtbar macht."'},
-      {who:'Fraktion SPD',text:'"Anna Mungunda: eine Frau, die gekämpft hat. Dieser Name erzählt eine Geschichte, nicht nur ein Datum."'},
-      {who:'Fraktion AfD',text:'"Wir lehnen die Umbenennung ab. Ein Zusatzschild hätte gereicht."'},
+      {who:'Fraktion 1',text:'"Maji-Maji — ein Name, der den antikolonialen Widerstand direkt sichtbar macht."'},
+      {who:'Fraktion 2',text:'"Anna Mungunda: eine Frau, die gekämpft hat. Dieser Name erzählt eine Geschichte, nicht nur ein Datum."'},
+      {who:'Fraktion 3',text:'"Wir lehnen die Umbenennung ab. Ein Zusatzschild hätte gereicht."'},
       {who:'Anwohnerin',text:'"Ich habe einen Namen vorgeschlagen. Ich weiß nicht, warum er nicht auf der Shortlist gelandet ist."'},
     ],
     conflictNote:'Aus 192 Vorschlägen wurden am Ende drei Namen. Was mit den anderen 189 passiert ist, hat das Verfahren nicht vollständig beantwortet.',
