@@ -283,6 +283,13 @@ p.lead {
   line-height: var(--leading-normal);
 }
 
+.info-box.purple {
+  background: rgba(91, 30, 110, 0.12);
+  border-left-color: #5B1E6E;
+}
+.info-box.purple p {
+  color: #3a1247;
+}
 .result-card .r-label {
   font-family: var(--sans);
   font-size: var(--text-xs);
