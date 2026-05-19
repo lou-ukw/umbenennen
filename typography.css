@@ -75,16 +75,16 @@ body {
 /* ── ÜBERSCHRIFTEN ────────────────────────────────────────────────── */
 
 /*
-  h1: großer Serifentitel — für Szenario-Titel, Startseite
+  h1: großer Titel — für Szenario-Titel, Startseite
   Entspricht dem editorial-Stil von umbenennen.berlin
 */
 h1 {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: var(--text-2xl);
   font-weight: 400;
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
-  color: var(--text);
+  color: #5B1E6E;
 }
 
 /*
