@@ -702,8 +702,7 @@ const SCENARIOS = [
     timeline:[
       {label:'23. Juni 2021',desc:'Die Landesarbeitsgemeinschaft Schwule Juristen stellt eine Anregung zur Umbenennung beim Bezirksamt Mitte.'},
       {label:'2021–2024',desc:'Historisches Gutachten zu Kluck und möglichen Namensgeber*innen.'},
-      {label:'11. November 2025',desc:'Bezirksamt Mitte beschließt Umbenennung in Anita-Augspurg-Straße.'},
-      {label:'23. Mai 2026',desc:'Umbenennung wirksam — Tag des Grundgesetzes. Bewusst gewähltes Datum.'},
+      {label:'11. November 2025',desc:'Bezirksamt Mitte beschließt Umbenennung in Anita-Augspurg-Straße. Das Wirksamkeitsdatum steht noch aus.'},
     ],
     reasons:[
       {id:'ns_anti',label:'NS-zeitliche Benennung eines Antidemokraten',desc:'Kluck wurde 1935 geehrt. Seine Schriften vertreten antidemokratische Positionen und bereiten NS-Ideologie vor.',valid:true},
@@ -727,7 +726,7 @@ const SCENARIOS = [
       {id:'anw',name:'Anwohner*innen Tiergarten',role:'Optional — direkt Betroffene',required:false},
       {id:'hist',name:'Historiker*innen',role:'Optional — Fachgutachten',required:false},
     ],
-    namesIntro:'Die Gleichstellungsrichtlinie gilt auch hier. Das Datum der Wirksamkeit — 23. Mai, Tag des Grundgesetzes — war bei der Namenswahl mitgedacht. Nicht alle Optionen sind formell zulässig.',
+    namesIntro:'Die Gleichstellungsrichtlinie gilt auch hier - aber nicht alle Optionen sind formell zulässig.',
     names:[
       {id:'augspurg',name:'Anita-Augspurg-Straße',years:'Anita Augspurg, 1857–1943',desc:'Erste promovierte Juristin Deutschlands. Gründerin des Deutschen Vereins für Frauenstimmrecht (1902). Pazifistin. 1933 ausgebürgert.',valid:true},
       {id:'heymann',name:'Lida-Gustava-Heymann-Straße',years:'Lida Gustava Heymann, 1868–1943',desc:'Lebenspartnerin und Weggefährtin Augspurgs. Frauenrechtlerin und Pazifistin. 1933 ausgebürgert.',valid:true},
@@ -736,22 +735,21 @@ const SCENARIOS = [
       {id:'alive3',name:'Kristina-Hänel-Straße',years:'*1956',desc:'Ärztin und Aktivistin für Schwangerschaftsabbruchrecht. Lebt noch.',valid:false,context:'Berliner Benennungsrichtlinie: Keine Benennung nach lebenden Personen.'},
     ],
     conflictTitle:'Stimmen aus dem Verfahren',
-    conflictIntro:'Das Verfahren hat eine unerwartete Dimension: Nicht der zu ersetzende Name war das Hauptthema — sondern das Datum.',
+    conflictIntro:'Das Verfahren hat eine unerwartete Dimension: Nicht der zu ersetzende Name stand im Mittelpunkt — sondern die Frage, wann und wie die Umbenennung in Kraft tritt.',
     voices:[
-      {who:'LAG Schwule Juristen',text:'"Anita Augspurg steht für alles, wofür das Grundgesetz steht. Das Datum ist kein Zufall."'},
+      {who:'LAG Schwule Juristen',text:'"Anita Augspurg steht für alles, wofür das Grundgesetz steht. Das Datum vom 23.05.2026 wäre sehr passend."'},
       {who:'Anwohnerin',text:'"Ich hätte mir gewünscht, dass man uns früher informiert hat. Ich habe von der Umbenennung aus der Zeitung erfahren."'},
       {who:'Historikerin',text:'"Augspurg ist eine gute Wahl — aber es gibt viele Frauen, die im Berliner Straßenbild fehlen."'},
-      {who:'Mitarbeiter, Bezirksamt Mitte',text:'"Der 23. Mai war uns wichtig. Das ist kein Symbolismus um des Symbolismus willen."'},
     ],
-    conflictNote:'Die Umbenennung tritt am 23. Mai 2026 in Kraft — dem Tag des Grundgesetzes, drei Tage nach Eröffnung dieser Ausstellung.',
+    conflictNote:'Die Umbenennung steht noch aus.',
     decisions:[
-      {id:'augspurg',label:'Anita-Augspurg-Straße',detail:'Historisch beschlossen. Wirksamkeit: 23. Mai 2026, Tag des Grundgesetzes.'},
+      {id:'augspurg',label:'Anita-Augspurg-Straße',detail:'Die Umbenennung ist beschlossen — wann sie in Kraft tritt, steht noch nicht fest.'},
       {id:'heymann',label:'Lida-Gustava-Heymann-Straße',detail:'Regelkonforme Alternative — enge Weggefährtin Augspurgs.'},
       {id:'dohm',label:'Hedwig-Dohm-Straße',detail:'Berliner Feministin, weniger bekannt, stärkerer Lokalbezug.'},
       {id:'keep',label:'Kluckstraße mit Zusatzschild',detail:'Name bleibt — historischer Kontext durch erklärendes Schild sichtbar.'},
     ],
     results:{
-      augspurg:{title:'Anita-Augspurg-Straße',summary:'Bezirksamt Mitte beschließt die Umbenennung am 11. November 2025.',signStreet:'Anita-Augspurg-Straße',signSub:'Anita Augspurg, 1857–1943 · Juristin, Frauenrechtlerin, Pazifistin',reflection:'So hat das Bezirksamt Mitte entschieden. Augspurg wurde nicht nur wegen ihrer Biografie gewählt — sondern auch wegen des Datums. Ob eine Straße ein politisches Statement sein soll, ist eine offene Frage.',source:'Quellen: Bezirksamt Mitte, Beschluss 11.11.2025. Wirksamkeit 23.5.2026.'},
+      augspurg:{title:'Anita-Augspurg-Straße',summary:'Bezirksamt Mitte beschließt die Umbenennung am 11. November 2025. Das Verfahren ist noch nicht abgeschlossen.',signStreet:'Anita-Augspurg-Straße',signSub:'Anita Augspurg, 1857–1943 · Juristin, Frauenrechtlerin, Pazifistin',reflection:'Das Bezirksamt Mitte hat die Umbenennung beschlossen — das Verfahren ist jedoch noch nicht abgeschlossen. Die Wahl des Namens war auch eine Entscheidung über ein Datum: Der 23. Mai, Tag des Grundgesetzes, war als Wirksamkeitsdatum vorgesehen. Ob und wann es dazu kommt, ist offen.',source:'Quellen: Bezirksamt Mitte, Beschluss 11.11.2025. Wirksamkeitsdatum ausstehend.'},
       heymann:{title:'Lida-Gustava-Heymann-Straße',summary:'Die BVV entscheidet sich für Lida Gustava Heymann.',signStreet:'Lida-Gustava-Heymann-Straße',signSub:'Lida Gustava Heymann, 1868–1943 · Frauenrechtlerin, Pazifistin',reflection:'Heymann und Augspurg kämpften gemeinsam, lebten zusammen, starben im selben Jahr im Exil. Dass die eine bekannter ist als die andere, ist selbst eine historische Frage.',source:'Quellen: Bezirksamt Mitte, 2025.'},
       dohm:{title:'Hedwig-Dohm-Straße',summary:'Eine Entscheidung für eine weniger bekannte, aber historisch tief verankerte Berlinerin.',signStreet:'Hedwig-Dohm-Straße',signSub:'Hedwig Dohm, 1831–1919 · Feministin, Schriftstellerin',reflection:'Hedwig Dohm war im realen Verfahren kein Kandidat. Das wirft eine grundsätzliche Frage auf: Bevorzugen Umbenennungsverfahren Personen, die bereits bekannt sind?',source:'Quellen: Bezirksamt Mitte, 2025.'},
       keep:{title:'Kluckstraße mit Zusatzschild',summary:'Der Name bleibt. Ein erklärendes Schild macht Klucks politische Haltung sichtbar.',signStreet:null,reflection:'Auch diese Option hätte vertretbar begründet werden können. Ist Sichtbarmachen dasselbe wie Erinnern?',source:'Quellen: Bezirksamt Mitte, 2025.'},
